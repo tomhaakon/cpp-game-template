@@ -4,3 +4,6 @@
 [submodule "external/json"]
 	path = external/json
 	url = https://github.com/nlohmann/json.git
+[submodule "external/game-core"]
+	path = external/game-core
+	url = https://github.com/tomhaakon/cpp-game-core.git
