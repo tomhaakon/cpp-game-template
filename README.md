@@ -64,7 +64,7 @@ Keep new code consistent with the existing template:
 - **Classes and structs:** `PascalCase`, for example `Game` and `PlayerState`.
 - **Functions and methods:** `camelCase`, for example `run()`, `loadConfig()`, and `update(float deltaTime)`.
 - **Local variables and parameters:** `camelCase`, for example `fontSize`, `relativePath`, and `deltaTime`.
-- **Member variables:** `camelCase` with a trailing underscore, for example `windowOpen_` and `playerPosition_`. The underscore makes object state easy to distinguish from parameters and local variables.
+- **Member variables:** `camelCase` with a trailing underscore, for example `windowOpen_` and `currentScene_`. The underscore makes object state easy to distinguish from parameters and local variables.
 - **Constants:** `camelCase` when scoped locally, for example `fontSize`; use `kPascalCase` for named namespace- or class-level constants, for example `kDefaultWindowWidth`.
 - **Namespaces:** lowercase `snake_case`, for example `json_file`. A single lowercase word is preferred when it is clear, such as `assets`.
 - **Macros and compile definitions:** uppercase `SNAKE_CASE`, for example `CPP_GAME_DEVELOPMENT_ASSET_DIR`.
@@ -77,6 +77,32 @@ Use `#pragma once` in project headers. Prefer clear names over abbreviations, an
 Load an asset with `assets::path("textures/player.png")`. Development builds use the repository's `assets` directory, while distributable builds fall back to the `assets` folder beside the executable/current working directory.
 
 Load and save JSON with `json_file::load(assets::path("data/config.json"))` and `json_file::save(path, document)`. Saving creates missing parent directories and writes four-space-indented JSON.
+
+### Input actions
+
+Game code queries logical actions instead of physical keyboard keys. WASD and the arrow keys share the same directional actions, so they can drive menus or gameplay without duplicated checks.
+
+- `Input::isDown(action)` remains true while any bound key is held.
+- `Input::isPressed(action)` is true only on the frame a bound key is pressed.
+- `Input::isReleased(action)` is true only on the frame a bound key is released.
+
+For example, a menu can move its selection once per key press:
+
+```cpp
+if (Input::isPressed(Action::MoveDown)) {
+    // Select the next menu item.
+}
+```
+
+Use a pressed query for one-time actions:
+
+```cpp
+if (Input::isPressed(Action::Confirm)) {
+    // Confirm once.
+}
+```
+
+To add an action, add it to `Action` in `src/input/Input.h`, then handle it in the compile-time `bindingsFor()` switch in `src/input/Input.cpp`.
 
 To start a new game, rename the CMake project and executable target in `CMakeLists.txt`, update the target references in `.vscode/tasks.json`, and replace the title passed to `Game` in `src/main.cpp`.
 

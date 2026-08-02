@@ -37,6 +37,8 @@ target_sources(cpp_game PRIVATE
     "src/main.cpp"
     "src/game/Game.cpp"
     "src/game/Game.h"
+    "src/input/Input.cpp"
+    "src/input/Input.h"
     "src/support/AssetPath.cpp"
     "src/support/AssetPath.h"
     "src/support/JsonFile.cpp"

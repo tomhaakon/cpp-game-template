@@ -1,6 +1,6 @@
 #include "game/Game.h"
+
 #include <raylib.h>
-#include <utility>
 
 Game::Game(int width, int height, std::string title) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
