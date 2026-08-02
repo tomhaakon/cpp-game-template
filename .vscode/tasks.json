@@ -1,0 +1,16 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "CMake: Build debug preset",
+            "type": "process",
+            "command": "cmake",
+            "args": ["--build", "--preset", "debug"],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc", "$msCompile"]
+        }
+    ]
+}

@@ -1,0 +1,36 @@
+# Build trees and CMake output
+build/
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+install_manifest.txt
+Makefile
+compile_commands.json
+
+# Compiler output
+*.a
+*.d
+*.dll
+*.dylib
+*.exe
+*.ilk
+*.lib
+*.obj
+*.o
+*.pdb
+*.so
+
+# Runtime-generated data
+logs/
+saves/
+
+# Local editor and IDE state (shared .vscode files remain tracked)
+.vs/
+.idea/
+.vscode/*.local.json
+*.code-workspace
+
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini

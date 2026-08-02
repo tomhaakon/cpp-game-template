@@ -1,0 +1,13 @@
+{
+    "cmake.useCMakePresets": "always",
+    "cmake.configureOnOpen": true,
+    "cmake.defaultConfigurePreset": "debug",
+    "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools",
+        "editor.formatOnSave": true
+    },
+    "files.associations": {
+        "*.h": "cpp"
+    }
+}

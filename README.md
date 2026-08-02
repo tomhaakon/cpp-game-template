@@ -1,1 +1,74 @@
-#cppp-game-template
+# C++ Game Template
+
+A small C++17 foundation for games and prototypes using raylib, nlohmann/json, CMake, and VS Code. It deliberately contains only a game loop, centralized asset paths, and JSON file helpers.
+
+## Prerequisites
+
+- Git
+- CMake 3.24 or newer
+- A C++17 compiler
+- Ninja for the included presets
+
+## Clone and build
+
+Clone a new copy with its dependencies:
+
+```bash
+git clone --recurse-submodules <git@github.com:tomhaakon/cpp-game-template.git>
+cd cpp-game-template
+```
+
+For an existing clone, initialize the dependencies with:
+
+```bash
+git submodule update --init --recursive
+```
+
+Configure and build a debug version:
+
+```bash
+cmake --preset debug
+cmake --build --preset debug
+```
+
+Configure and build an optimized release version:
+
+```bash
+cmake --preset release
+cmake --build --preset release
+```
+
+## Extending the template
+
+Add new `.cpp` files explicitly to `target_sources` in `CMakeLists.txt`; do not rely on source globbing.
+
+### Naming conventions
+
+Keep new code consistent with the existing template:
+
+- **Classes and structs:** `PascalCase`, for example `Game` and `PlayerState`.
+- **Functions and methods:** `camelCase`, for example `run()`, `loadConfig()`, and `update(float deltaTime)`.
+- **Local variables and parameters:** `camelCase`, for example `fontSize`, `relativePath`, and `deltaTime`.
+- **Member variables:** `camelCase` with a trailing underscore, for example `windowOpen_` and `playerPosition_`. The underscore makes object state easy to distinguish from parameters and local variables.
+- **Constants:** `camelCase` when scoped locally, for example `fontSize`; use `kPascalCase` for named namespace- or class-level constants, for example `kDefaultWindowWidth`.
+- **Namespaces:** lowercase `snake_case`, for example `json_file`. A single lowercase word is preferred when it is clear, such as `assets`.
+- **Macros and compile definitions:** uppercase `SNAKE_CASE`, for example `CPP_GAME_DEVELOPMENT_ASSET_DIR`.
+- **Class files:** match the class name and use `.h` and `.cpp`, for example `Game.h` and `Game.cpp`.
+- **Other source files:** use a descriptive `PascalCase` name, for example `AssetPath.cpp` and `JsonFile.h`.
+- **CMake targets:** lowercase `snake_case`, for example `cpp_game`.
+
+Use `#pragma once` in project headers. Prefer clear names over abbreviations, and keep terminology consistent between filenames, types, and functions.
+
+Load an asset with `assets::path("textures/player.png")`. Development builds use the repository's `assets` directory, while distributable builds fall back to the `assets` folder beside the executable/current working directory.
+
+Load and save JSON with `json_file::load(assets::path("data/config.json"))` and `json_file::save(path, document)`. Saving creates missing parent directories and writes four-space-indented JSON.
+
+To start a new game, rename the CMake project and executable target in `CMakeLists.txt`, update the target references in `.vscode/tasks.json`, and replace the title passed to `Game` in `src/main.cpp`.
+
+## Troubleshooting
+
+If configuration reports missing raylib or nlohmann/json sources, run:
+
+```bash
+git submodule update --init --recursive
+```
