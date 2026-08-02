@@ -24,6 +24,16 @@ For an existing clone, initialize the dependencies with:
 git submodule update --init --recursive
 ```
 
+The shared code in `external/game-core` is pinned to a specific commit. After publishing changes to the `main` branch of `cpp-game-core`, update the template to the latest core commit with:
+
+```bash
+git submodule update --remote external/game-core
+git add external/game-core
+git commit -m "Update cpp-game-core"
+```
+
+The final commit records the new core revision in this repository. Cloning or running `git pull` alone does not advance a pinned submodule.
+
 Configure and build a debug version:
 
 ```bash
@@ -102,7 +112,7 @@ if (Input::isPressed(Action::Confirm)) {
 }
 ```
 
-To add an action, add it to `Action` in `src/input/Input.h`, then handle it in the compile-time `bindingsFor()` switch in `src/input/Input.cpp`.
+To add an action, make and publish the change in the separate `cpp-game-core` repository, then update this template's submodule revision. The public declaration is in `include/game_core/Input.h`, and its compile-time bindings are in `src/Input.cpp` within that repository.
 
 To start a new game, rename the CMake project and executable target in `CMakeLists.txt`, update the target references in `.vscode/tasks.json`, and replace the title passed to `Game` in `src/main.cpp`.
 

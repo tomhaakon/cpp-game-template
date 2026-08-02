@@ -1,5 +1,4 @@
 #include "game/Game.h"
-
 #include <raylib.h>
 
 Game::Game(int width, int height, std::string title) {
