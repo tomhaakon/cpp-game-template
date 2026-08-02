@@ -11,6 +11,14 @@
             "displayName": "Debug",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/debug",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
             "warnings": {
                 "deprecated": false
             },
@@ -24,6 +32,14 @@
             "displayName": "Release",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/release",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
             "warnings": {
                 "deprecated": false
             },
