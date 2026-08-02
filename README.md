@@ -88,6 +88,16 @@ Load an asset with `assets::path("textures/player.png")`. Development builds use
 
 Load and save JSON with `json_file::load(assets::path("data/config.json"))` and `json_file::save(path, document)`. Saving creates missing parent directories and writes four-space-indented JSON.
 
+### Logging
+
+The template initializes `cpp-game-core` file logging at startup and shuts it down after the game window closes. Each run writes a timestamped file under `logs` relative to the executable's working directory. Messages can be recorded with calls such as:
+
+```cpp
+Log::info("Gameplay", "Level loaded");
+Log::warning("Assets", "Using fallback texture");
+Log::error("Save", "Could not write save file");
+```
+
 ### Input actions
 
 Game code queries logical actions instead of physical keyboard keys. WASD and the arrow keys share the same directional actions, so they can drive menus or gameplay without duplicated checks.
