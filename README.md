@@ -72,3 +72,5 @@ If configuration reports missing raylib or nlohmann/json sources, run:
 ```bash
 git submodule update --init --recursive
 ```
+
+If MSVC reports that standard headers such as `string` or `filesystem` cannot be found in VS Code, run **CMake: Delete Cache and Reconfigure**. The shared VS Code settings activate the complete Visual Studio developer environment so Ninja can find the MSVC standard library and Windows SDK.
