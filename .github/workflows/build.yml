@@ -1,0 +1,93 @@
+name: Build
+
+on:
+  push:
+    tags-ignore:
+      - "v*"
+  pull_request:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: build-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  linux:
+    name: Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            libasound2-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libxinerama-dev \
+            libxrandr-dev \
+            libx11-dev \
+            ninja-build
+
+      - name: Build debug
+        run: |
+          cmake --preset debug
+          cmake --build --preset debug
+
+      - name: Build release
+        run: |
+          cmake --preset release
+          cmake --build --preset release
+
+  macos:
+    name: macOS
+    runs-on: macos-15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        run: brew install ninja
+
+      - name: Build debug
+        run: |
+          cmake --preset debug
+          cmake --build --preset debug
+
+      - name: Build release
+        run: |
+          cmake --preset release
+          cmake --build --preset release
+
+  windows:
+    name: Windows
+    runs-on: windows-2025
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        shell: powershell
+        run: choco install ninja --yes --no-progress
+
+      - name: Build debug and release with MSVC
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSINSTALL=%%i"
+          call "%VSINSTALL%\Common7\Tools\VsDevCmd.bat" -arch=x64
+          cmake --preset debug
+          cmake --build --preset debug
+          cmake --preset release
+          cmake --build --preset release

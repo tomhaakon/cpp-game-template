@@ -1,0 +1,161 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: false
+
+jobs:
+  linux:
+    name: Package Linux
+    runs-on: ubuntu-24.04
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install build dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install --yes \
+            libasound2-dev \
+            libgl1-mesa-dev \
+            libglu1-mesa-dev \
+            libxcursor-dev \
+            libxi-dev \
+            libxinerama-dev \
+            libxrandr-dev \
+            libx11-dev \
+            ninja-build
+
+      - name: Build release
+        run: |
+          cmake --preset release
+          cmake --build --preset release
+
+      - name: Package release
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          package="cpp_game-${RELEASE_TAG}-linux-x64"
+          mkdir -p "dist/${package}"
+          cp "build/release/cpp_game" "dist/${package}/"
+          cp -R "build/release/assets" "dist/${package}/assets"
+          tar -C dist -czf "dist/${package}.tar.gz" "${package}"
+          rm -rf "dist/${package}"
+
+      - name: Upload Linux package
+        uses: actions/upload-artifact@v7
+        with:
+          name: linux-package
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  macos:
+    name: Package macOS
+    runs-on: macos-15
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        run: brew install ninja
+
+      - name: Build release
+        run: |
+          cmake --preset release
+          cmake --build --preset release
+
+      - name: Package release
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          package="cpp_game-${RELEASE_TAG}-macos"
+          mkdir -p "dist/${package}"
+          cp "build/release/cpp_game" "dist/${package}/"
+          cp -R "build/release/assets" "dist/${package}/assets"
+          tar -C dist -czf "dist/${package}.tar.gz" "${package}"
+          rm -rf "dist/${package}"
+
+      - name: Upload macOS package
+        uses: actions/upload-artifact@v7
+        with:
+          name: macos-package
+          path: dist/*.tar.gz
+          if-no-files-found: error
+
+  windows:
+    name: Package Windows
+    runs-on: windows-2025
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v6
+        with:
+          submodules: recursive
+
+      - name: Install Ninja
+        shell: powershell
+        run: choco install ninja --yes --no-progress
+
+      - name: Build release with MSVC
+        shell: cmd
+        run: |
+          for /f "usebackq tokens=*" %%i in (`"%ProgramFiles(x86)%\Microsoft Visual Studio\Installer\vswhere.exe" -latest -property installationPath`) do set "VSINSTALL=%%i"
+          call "%VSINSTALL%\Common7\Tools\VsDevCmd.bat" -arch=x64
+          cmake --preset release
+          cmake --build --preset release
+
+      - name: Package release
+        shell: powershell
+        env:
+          RELEASE_TAG: ${{ github.ref_name }}
+        run: |
+          $package = "cpp_game-$env:RELEASE_TAG-windows-x64"
+          $packagePath = Join-Path "dist" $package
+          New-Item -ItemType Directory -Path $packagePath -Force | Out-Null
+          Copy-Item "build/release/cpp_game.exe" $packagePath
+          Copy-Item "build/release/assets" $packagePath -Recurse
+          Compress-Archive -Path $packagePath -DestinationPath "dist/$package.zip"
+          Remove-Item $packagePath -Recurse -Force
+
+      - name: Upload Windows package
+        uses: actions/upload-artifact@v7
+        with:
+          name: windows-package
+          path: dist/*.zip
+          if-no-files-found: error
+
+  publish:
+    name: Publish GitHub Release
+    needs:
+      - linux
+      - macos
+      - windows
+    runs-on: ubuntu-24.04
+    permissions:
+      contents: write
+    steps:
+      - name: Download packages
+        uses: actions/download-artifact@v8
+        with:
+          path: dist
+          merge-multiple: true
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${GITHUB_REF_NAME}" dist/* \
+            --verify-tag \
+            --generate-notes \
+            --title "${GITHUB_REF_NAME}"

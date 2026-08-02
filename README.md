@@ -38,6 +38,21 @@ cmake --preset release
 cmake --build --preset release
 ```
 
+## Continuous integration
+
+The GitHub Actions workflow in `.github/workflows/build.yml` builds both presets on Windows, Linux, and macOS. It runs for every push and pull request, checks out the dependency submodules recursively, and gives the workflow read-only repository permissions.
+
+### Creating a release
+
+Push a version tag to build Windows, Linux, and macOS packages and publish them in a GitHub Release with automatically generated release notes:
+
+```bash
+git tag -a v1.0.0 -m "Release v1.0.0"
+git push origin v1.0.0
+```
+
+Release tags must start with `v`. Use semantic versions such as `v1.0.0`, `v1.1.0`, or `v2.0.0`. The release is published only after every platform package builds successfully.
+
 ## Extending the template
 
 Add new `.cpp` files explicitly to `target_sources` in `CMakeLists.txt`; do not rely on source globbing.
