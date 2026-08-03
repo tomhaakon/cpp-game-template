@@ -22,7 +22,7 @@ set_target_properties(teya_game PROPERTIES
     VS_DEBUGGER_WORKING_DIRECTORY "$<TARGET_FILE_DIR:teya_game>"
 )
 target_include_directories(teya_game PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/src")
-target_link_libraries(teya_game PRIVATE Teya::TwoD)
+target_link_libraries(teya_game PRIVATE Teya::2D)
 target_compile_definitions(teya_core PRIVATE
     TEYA_DEVELOPMENT_ASSET_DIR="${CMAKE_CURRENT_SOURCE_DIR}/assets")
 

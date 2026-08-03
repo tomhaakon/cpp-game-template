@@ -1,7 +1,7 @@
 # Teya Game Template
 
 A C++17 starting point for Teya games and prototypes. The template consumes
-`Teya::TwoD`; that module brings `Teya::Tiled`, while `Teya::Core` owns raylib,
+`Teya::2D`; that module brings `Teya::Tiled`, while `Teya::Core` owns raylib,
 nlohmann/json, logging, input, and asset paths.
 
 ## Prerequisites
@@ -16,7 +16,7 @@ nlohmann/json, logging, input, and asset paths.
 Clone a new copy with its dependencies:
 
 ```bash
-git clone --recurse-submodules <git@github.com:tomhaakon/teya-game-template.git>
+git clone --recurse-submodules git@github.com:tomhaakon/teya-game-template.git
 cd teya-game-template
 ```
 
@@ -36,7 +36,8 @@ git add external/teya-core external/teya-2d
 git commit -m "Update Teya modules"
 ```
 
-The final commit records the new core revision in this repository. Cloning or running `git pull` alone does not advance a pinned submodule.
+The final commit records the new Core and 2D module revisions in this repository.
+Cloning or running `git pull` alone does not advance pinned submodules.
 
 Configure and build a debug version:
 
@@ -107,7 +108,10 @@ and writes four-space-indented JSON.
 
 ### Logging
 
-The template initializes `teya-core` file logging at startup and shuts it down after the game window closes. Each run replaces `logs/teya_game.log` relative to the executable's working directory. Messages can be recorded with calls such as:
+The template initializes `teya-core` file logging at startup and shuts it down
+after the game window closes. Each run appends a new session to
+`logs/teya_game.log` relative to the executable's working directory. Messages
+can be recorded with calls such as:
 
 ```cpp
 teya::core::Log::info("Gameplay", "Level loaded");
@@ -115,20 +119,22 @@ teya::core::Log::warning("Assets", "Using fallback texture");
 teya::core::Log::error("Save", "Could not write save file");
 ```
 
-Pass a `Log::LogConfig` as the second argument to `Log::initialize()` when the default `Info` level and flushing behavior are not suitable.
+Pass a `teya::core::Log::LogConfig` as the second argument to
+`teya::core::Log::initialize()` when the default `Info` level and flushing
+behavior are not suitable.
 
 ### Input actions
 
 Game code queries logical actions instead of physical keyboard keys. WASD and the arrow keys share the same directional actions, so they can drive menus or gameplay without duplicated checks.
 
-- `Input::isDown(action)` remains true while any bound key is held.
-- `Input::isPressed(action)` is true only on the frame a bound key is pressed.
-- `Input::isReleased(action)` is true only on the frame a bound key is released.
+- `teya::core::Input::isDown(action)` remains true while any bound key is held.
+- `teya::core::Input::isPressed(action)` is true only on the frame a bound key is pressed.
+- `teya::core::Input::isReleased(action)` is true only on the frame a bound key is released.
 
 For example, a menu can move its selection once per key press:
 
 ```cpp
-if (Input::isPressed(Action::MoveDown)) {
+if (teya::core::Input::isPressed(teya::core::Action::MoveDown)) {
     // Select the next menu item.
 }
 ```
@@ -136,7 +142,7 @@ if (Input::isPressed(Action::MoveDown)) {
 Use a pressed query for one-time actions:
 
 ```cpp
-if (Input::isPressed(Action::Confirm)) {
+if (teya::core::Input::isPressed(teya::core::Action::Confirm)) {
     // Confirm once.
 }
 ```
