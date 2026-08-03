@@ -4,6 +4,18 @@ A C++17 starting point for Teya games and prototypes. The template consumes
 `Teya::2D`; that module brings `Teya::Tiled`, while `Teya::Core` owns raylib,
 nlohmann/json, logging, input, and asset paths.
 
+## Current architecture
+
+The application is split into three game-level responsibilities:
+
+- `Game` owns the window, fixed-resolution canvas, and main loop.
+- `game::World` owns the tile map, collision world, and player.
+- `Player` owns player input, movement, animation, texture, and collider.
+
+See [Game architecture](docs/architecture.md) for ownership diagrams, the
+update/draw sequence, lifecycle rules, module boundaries, and the exact player
+sprite-sheet layout.
+
 ## Prerequisites
 
 - Git

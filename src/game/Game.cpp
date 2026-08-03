@@ -7,16 +7,6 @@ constexpr int LogicalWidth = 480;
 constexpr int LogicalHeight = 320;
 constexpr int WindowScale = 2;
 constexpr const char *WindowTitle = "Teya Game Template";
-
-void addBoundary(teya::collision2d::World &world, teya::collision2d::Rectangle area,
-                 float thickness) {
-    (void)world.add(
-        {{area.x - thickness, area.y - thickness, area.width + thickness * 2.0f, thickness}, 2});
-    (void)world.add(
-        {{area.x - thickness, area.y + area.height, area.width + thickness * 2.0f, thickness}, 2});
-    (void)world.add({{area.x - thickness, area.y, thickness, area.height}, 2});
-    (void)world.add({{area.x + area.width, area.y, thickness, area.height}, 2});
-}
 } // namespace
 
 Game::Game() {
@@ -27,17 +17,16 @@ Game::Game() {
     if (!canvas_.initialize(LogicalWidth, LogicalHeight)) {
         teya::core::Log::error("Graphics", "Could not create the 480x320 pixel canvas");
     }
-    (void)map_.load("assets/maps/template_map.tmj");
-    addBoundary(collisions_, {16.0f, 16.0f, 448.0f, 288.0f}, 8.0f);
-    (void)player_.initialize(collisions_, {LogicalWidth * 0.5f, LogicalHeight * 0.5f});
+    if (!world_.initialize()) {
+        teya::core::Log::error("World", "Could not initialize the game world");
+    }
 
     teya::core::Log::info("Game", "end of Game::Game.");
 }
 
 Game::~Game() {
     if (windowOpen_) {
-        player_.shutdown();
-        map_.unload();
+        world_.shutdown();
         canvas_.shutdown();
         CloseWindow();
     }
@@ -51,14 +40,13 @@ void Game::run() {
     }
 }
 
-void Game::update(float deltaTime) { player_.update(deltaTime); }
+void Game::update(float deltaTime) { world_.update(deltaTime); }
 
 void Game::draw() {
     canvas_.begin();
     ClearBackground(RAYWHITE);
 
-    map_.draw();
-    player_.draw();
+    world_.draw();
 
     canvas_.end();
 
