@@ -15,6 +15,8 @@ add_executable(teya_game
     src/main.cpp
     src/game/Game.cpp
     src/game/Game.h
+    src/player/Player.cpp
+    src/player/Player.h
 )
 target_compile_features(teya_game PRIVATE cxx_std_17)
 set_target_properties(teya_game PROPERTIES

@@ -1,7 +1,10 @@
 #pragma once
 
-#include <teya/tiled/MapRenderer.h>
+#include "player/Player.h"
+
+#include <teya/collision2d/World.h>
 #include <teya/graphics/PixelCanvas.h>
+#include <teya/tiled/MapRenderer.h>
 
 class Game {
   public:
@@ -22,4 +25,6 @@ class Game {
     bool windowOpen_ = false;
     teya::graphics::PixelCanvas canvas_;
     teya::tiled::MapRenderer map_;
+    teya::collision2d::World collisions_;
+    Player player_;
 };
