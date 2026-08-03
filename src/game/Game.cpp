@@ -9,7 +9,7 @@ constexpr int WindowScale = 2;
 constexpr const char *WindowTitle = "Teya Game Template";
 } // namespace
 
-Game::Game() {
+Game::Game() try {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(LogicalWidth * WindowScale, LogicalHeight * WindowScale, WindowTitle);
     windowOpen_ = IsWindowReady();
@@ -22,6 +22,11 @@ Game::Game() {
     }
 
     teya::core::Log::info("Game", "end of Game::Game.");
+} catch (...) {
+    // Members clean up before a constructor function-try-block handler runs.
+    // The raylib window is external state, so close it explicitly as well.
+    if (IsWindowReady()) CloseWindow();
+    throw;
 }
 
 Game::~Game() {
