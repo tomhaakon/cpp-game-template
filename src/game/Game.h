@@ -2,6 +2,7 @@
 
 #include <string>
 #include <teya/tiled/MapRenderer.h>
+#include <teya/graphics/PixelCanvas.h>
 
 class Game {
   public:
@@ -20,5 +21,6 @@ class Game {
     void draw();
 
     bool windowOpen_ = false;
+    teya::graphics::PixelCanvas canvas_;
     teya::tiled::MapRenderer map_;
 };
