@@ -13,7 +13,7 @@ int main() {
         teya::core::Log::info("Startup", "Game initialized");
 
         {
-            Game game(480, 320, "Teya Game Template");
+            Game game;
             game.run();
         }
 

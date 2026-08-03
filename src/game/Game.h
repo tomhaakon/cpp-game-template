@@ -1,12 +1,11 @@
 #pragma once
 
-#include <string>
 #include <teya/tiled/MapRenderer.h>
 #include <teya/graphics/PixelCanvas.h>
 
 class Game {
   public:
-    Game(int width, int height, std::string title);
+    Game();
     ~Game();
 
     Game(const Game &) = delete;
