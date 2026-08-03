@@ -1,0 +1,13 @@
+{
+  "type": "tileset",
+  "version": "1.10",
+  "tiledversion": "1.12.2",
+  "name": "template_tiles_320_480",
+  "tilewidth": 16,
+  "tileheight": 16,
+  "tilecount": 600,
+  "columns": 20,
+  "image": "../tiles/template_tiles_320_480.png",
+  "imagewidth": 320,
+  "imageheight": 480
+}

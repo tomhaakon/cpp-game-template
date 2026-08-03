@@ -1,15 +1,19 @@
 #include "game/Game.h"
 #include <raylib.h>
+#include <teya/core/Log.h>
 
 Game::Game(int width, int height, std::string title) {
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(width, height, title.c_str());
     windowOpen_ = IsWindowReady();
     SetTargetFPS(60);
+    (void)map_.load("assets/maps/template_map.tmj");
+    teya::core::Log::info("Game", "end of Game::Game.");
 }
 
 Game::~Game() {
     if (windowOpen_) {
+        map_.unload();
         CloseWindow();
     }
 }
@@ -28,11 +32,7 @@ void Game::draw() {
     BeginDrawing();
     ClearBackground(RAYWHITE);
 
-    constexpr const char *message = "C++ game template is running! Get ready to rumble..";
-    constexpr int fontSize = 30;
-    const int textWidth = MeasureText(message, fontSize);
-    DrawText(message, (GetScreenWidth() - textWidth) / 2, (GetScreenHeight() - fontSize) / 2,
-             fontSize, DARKGRAY);
+    map_.draw();
 
     EndDrawing();
 }

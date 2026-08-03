@@ -1,6 +1,7 @@
 #pragma once
 
 #include <string>
+#include <teya/tiled/MapRenderer.h>
 
 class Game {
   public:
@@ -19,4 +20,5 @@ class Game {
     void draw();
 
     bool windowOpen_ = false;
+    teya::tiled::MapRenderer map_;
 };

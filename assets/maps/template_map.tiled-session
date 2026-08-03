@@ -1,0 +1,42 @@
+{
+    "activeFile": "template_map.tmj",
+    "expandedProjectPaths": [
+    ],
+    "fileStates": {
+        "E:/Dokumenter/github/cpp-game-template/assets/tilesets/template_tiles_320_480.tsj": {
+            "scaleInDock": 1
+        },
+        "E:/Dokumenter/github/cpp-game-template/assets/tilesets/template_tiles_320_480.tsx": {
+            "scaleInDock": 1,
+            "scaleInEditor": 1
+        },
+        "template_map.tmj": {
+            "scale": 1.6803124999999999,
+            "selectedLayer": 0,
+            "viewCenter": {
+                "x": 240.13390366375307,
+                "y": 159.79170541193977
+            }
+        }
+    },
+    "last.exportedFilePath": "E:/Dokumenter/github/cpp-game-template/assets/maps",
+    "last.imagePath": "E:/Dokumenter/github/cpp-game-template/assets/tiles",
+    "map.lastUsedExportFilter": "JSON map files (*.tmj *.json)",
+    "map.lastUsedFormat": "json",
+    "map.tileHeight": 16,
+    "map.tileWidth": 16,
+    "openFiles": [
+        "template_map.tmj",
+        "E:/Dokumenter/github/cpp-game-template/assets/tilesets/template_tiles_320_480.tsx"
+    ],
+    "project": "template_map.tiled-project",
+    "recentFiles": [
+        "E:/Dokumenter/github/cpp-game-template/assets/tilesets/template_tiles_320_480.tsx",
+        "template_map.tmj"
+    ],
+    "tileset.lastUsedFormat": "tsx",
+    "tileset.tileSize": {
+        "height": 16,
+        "width": 16
+    }
+}

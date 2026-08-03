@@ -1,6 +1,8 @@
-# C++ Game Template
+# Teya Game Template
 
-A small C++17 foundation for games and prototypes using raylib, nlohmann/json, CMake, and VS Code. It deliberately contains only a game loop, centralized asset paths, and JSON file helpers.
+A C++17 starting point for Teya games and prototypes. The template consumes
+`Teya::TwoD`; that module brings `Teya::Tiled`, while `Teya::Core` owns raylib,
+nlohmann/json, logging, input, and asset paths.
 
 ## Prerequisites
 
@@ -14,8 +16,8 @@ A small C++17 foundation for games and prototypes using raylib, nlohmann/json, C
 Clone a new copy with its dependencies:
 
 ```bash
-git clone --recurse-submodules <git@github.com:tomhaakon/cpp-game-template.git>
-cd cpp-game-template
+git clone --recurse-submodules <git@github.com:tomhaakon/teya-game-template.git>
+cd teya-game-template
 ```
 
 For an existing clone, initialize the dependencies with:
@@ -24,12 +26,14 @@ For an existing clone, initialize the dependencies with:
 git submodule update --init --recursive
 ```
 
-The shared code in `external/game-core` is pinned to a specific commit. After publishing changes to the `main` branch of `cpp-game-core`, update the template to the latest core commit with:
+The shared modules in `external/teya-core` and `external/teya-2d` are pinned to
+specific commits. After publishing module changes, update them with:
 
 ```bash
-git submodule update --remote external/game-core
-git add external/game-core
-git commit -m "Update cpp-game-core"
+git submodule update --remote external/teya-core
+git submodule update --remote external/teya-2d
+git add external/teya-core external/teya-2d
+git commit -m "Update Teya modules"
 ```
 
 The final commit records the new core revision in this repository. Cloning or running `git pull` alone does not advance a pinned submodule.
@@ -47,6 +51,17 @@ Configure and build an optimized release version:
 cmake --preset release
 cmake --build --preset release
 ```
+
+### Visual Studio presets on Windows
+
+The portable `debug` and `release` presets use Ninja. VS Code installations that do not propagate the complete MSVC developer environment should select **Windows Debug (Visual Studio)** instead. It uses Visual Studio's CMake generator, which discovers the compiler, standard library, and Windows SDK without environment-variable setup:
+
+```powershell
+cmake --preset windows-debug
+cmake --build --preset windows-debug
+```
+
+Use `windows-release` for the corresponding release build. These Windows-only presets do not contain compiler installation paths.
 
 ## Continuous integration
 
@@ -77,26 +92,30 @@ Keep new code consistent with the existing template:
 - **Member variables:** `camelCase` with a trailing underscore, for example `windowOpen_` and `currentScene_`. The underscore makes object state easy to distinguish from parameters and local variables.
 - **Constants:** `camelCase` when scoped locally, for example `fontSize`; use `kPascalCase` for named namespace- or class-level constants, for example `kDefaultWindowWidth`.
 - **Namespaces:** lowercase `snake_case`, for example `json_file`. A single lowercase word is preferred when it is clear, such as `assets`.
-- **Macros and compile definitions:** uppercase `SNAKE_CASE`, for example `CPP_GAME_DEVELOPMENT_ASSET_DIR`.
+- **Macros and compile definitions:** uppercase `SNAKE_CASE`, for example `TEYA_DEVELOPMENT_ASSET_DIR`.
 - **Class files:** match the class name and use `.h` and `.cpp`, for example `Game.h` and `Game.cpp`.
 - **Other source files:** use a descriptive `PascalCase` name, for example `AssetPath.cpp` and `JsonFile.h`.
-- **CMake targets:** lowercase `snake_case`, for example `cpp_game`.
+- **CMake targets:** lowercase `snake_case`, for example `teya_game`.
 
 Use `#pragma once` in project headers. Prefer clear names over abbreviations, and keep terminology consistent between filenames, types, and functions.
 
-Load an asset with `assets::path("textures/player.png")`. Development builds use the repository's `assets` directory, while distributable builds fall back to the `assets` folder beside the executable/current working directory.
+Load an asset with `teya::core::assets::path("textures/player.png")`. Development builds use the repository's `assets` directory, while distributable builds fall back to the `assets` folder beside the executable/current working directory.
 
-Load and save JSON with `json_file::load(assets::path("data/config.json"))` and `json_file::save(path, document)`. Saving creates missing parent directories and writes four-space-indented JSON.
+Load and save JSON with `teya::core::json_file::load(...)` and
+`teya::core::json_file::save(...)`. Saving creates missing parent directories
+and writes four-space-indented JSON.
 
 ### Logging
 
-The template initializes `cpp-game-core` file logging at startup and shuts it down after the game window closes. Each run writes a timestamped file under `logs` relative to the executable's working directory. Messages can be recorded with calls such as:
+The template initializes `teya-core` file logging at startup and shuts it down after the game window closes. Each run replaces `logs/teya_game.log` relative to the executable's working directory. Messages can be recorded with calls such as:
 
 ```cpp
-Log::info("Gameplay", "Level loaded");
-Log::warning("Assets", "Using fallback texture");
-Log::error("Save", "Could not write save file");
+teya::core::Log::info("Gameplay", "Level loaded");
+teya::core::Log::warning("Assets", "Using fallback texture");
+teya::core::Log::error("Save", "Could not write save file");
 ```
+
+Pass a `Log::LogConfig` as the second argument to `Log::initialize()` when the default `Info` level and flushing behavior are not suitable.
 
 ### Input actions
 
@@ -122,7 +141,9 @@ if (Input::isPressed(Action::Confirm)) {
 }
 ```
 
-To add an action, make and publish the change in the separate `cpp-game-core` repository, then update this template's submodule revision. The public declaration is in `include/game_core/Input.h`, and its compile-time bindings are in `src/Input.cpp` within that repository.
+To add an action, make and publish the change in `teya-core`, then update this
+template's submodule revision. The public declaration is in
+`include/teya/core/Input.h`, and its bindings are in `src/Input.cpp`.
 
 To start a new game, rename the CMake project and executable target in `CMakeLists.txt`, update the target references in `.vscode/tasks.json`, and replace the title passed to `Game` in `src/main.cpp`.
 
