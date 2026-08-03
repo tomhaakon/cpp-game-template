@@ -8,12 +8,12 @@ constexpr int LogicalHeight = 320;
 constexpr int WindowScale = 2;
 constexpr const char *WindowTitle = "Teya Game Template";
 
-void addBoundary(teya::collision2d::World &world,
-                 teya::collision2d::Rectangle area, float thickness) {
-    (void)world.add({{area.x - thickness, area.y - thickness,
-                      area.width + thickness * 2.0f, thickness}, 2});
-    (void)world.add({{area.x - thickness, area.y + area.height,
-                      area.width + thickness * 2.0f, thickness}, 2});
+void addBoundary(teya::collision2d::World &world, teya::collision2d::Rectangle area,
+                 float thickness) {
+    (void)world.add(
+        {{area.x - thickness, area.y - thickness, area.width + thickness * 2.0f, thickness}, 2});
+    (void)world.add(
+        {{area.x - thickness, area.y + area.height, area.width + thickness * 2.0f, thickness}, 2});
     (void)world.add({{area.x - thickness, area.y, thickness, area.height}, 2});
     (void)world.add({{area.x + area.width, area.y, thickness, area.height}, 2});
 }
@@ -29,8 +29,7 @@ Game::Game() {
     }
     (void)map_.load("assets/maps/template_map.tmj");
     addBoundary(collisions_, {16.0f, 16.0f, 448.0f, 288.0f}, 8.0f);
-    (void)player_.initialize(
-        collisions_, {LogicalWidth * 0.5f, LogicalHeight * 0.5f});
+    (void)player_.initialize(collisions_, {LogicalWidth * 0.5f, LogicalHeight * 0.5f});
 
     teya::core::Log::info("Game", "end of Game::Game.");
 }
@@ -52,9 +51,7 @@ void Game::run() {
     }
 }
 
-void Game::update(float deltaTime) {
-    player_.update(deltaTime);
-}
+void Game::update(float deltaTime) { player_.update(deltaTime); }
 
 void Game::draw() {
     canvas_.begin();
@@ -63,7 +60,6 @@ void Game::draw() {
     map_.draw();
     player_.draw();
 
-    DrawText("WASD / ARROWS   HOLD SHIFT TO RUN", 10, 6, 10, DARKGRAY);
     canvas_.end();
 
     BeginDrawing();

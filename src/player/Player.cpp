@@ -6,12 +6,20 @@
 #include <cmath>
 
 namespace {
-constexpr float SpriteFrameSize = 64.0f;
-constexpr float DrawSize = 32.0f;
+constexpr int IdleFrameCount = 4;
+constexpr int MovementFrameCount = 6;
+constexpr int AnimationRows = 3;
+constexpr float SpriteFrameWidth = 48.0f;
+constexpr float SpriteFrameHeight = 48.0f;
+constexpr float DrawWidth = 48.0f;
+constexpr float DrawHeight = 48.0f;
 constexpr float ColliderSize = 10.0f;
 constexpr float WalkSpeed = 55.0f;
 constexpr float RunSpeed = 100.0f;
-constexpr int FrameCount = 6;
+constexpr int ExpectedSheetWidth =
+    MovementFrameCount * static_cast<int>(SpriteFrameWidth);
+constexpr int ExpectedSheetHeight =
+    AnimationRows * static_cast<int>(SpriteFrameHeight);
 } // namespace
 
 Player::~Player() { shutdown(); }
@@ -27,14 +35,26 @@ bool Player::initialize(teya::collision2d::World &world,
         world_ = nullptr;
         return false;
     }
+
+    if (texture_.width != ExpectedSheetWidth ||
+        texture_.height != ExpectedSheetHeight) {
+        teya::core::Log::error(
+            "Player",
+            "Player sprite sheet must be exactly 288x144 pixels: "
+            "6 columns by 3 rows, with 48x48 frames");
+        UnloadTexture(texture_);
+        texture_ = {};
+        world_ = nullptr;
+        return false;
+    }
     SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
 
-    animator_.setGridAnimation("idle", 0, FrameCount, SpriteFrameSize,
-                               SpriteFrameSize, 0.18f);
-    animator_.setGridAnimation("walk", 1, FrameCount, SpriteFrameSize,
-                               SpriteFrameSize, 0.11f);
-    animator_.setGridAnimation("run", 2, FrameCount, SpriteFrameSize,
-                               SpriteFrameSize, 0.075f);
+    animator_.setGridAnimation("idle", 0, IdleFrameCount, SpriteFrameWidth,
+                               SpriteFrameHeight, 0.18f);
+    animator_.setGridAnimation("walk", 1, MovementFrameCount, SpriteFrameWidth,
+                               SpriteFrameHeight, 0.11f);
+    animator_.setGridAnimation("run", 2, MovementFrameCount, SpriteFrameWidth,
+                               SpriteFrameHeight, 0.075f);
 
     collider_ = world_->add(
         {{position.x - ColliderSize * 0.5f, position.y - ColliderSize * 0.5f,
@@ -97,9 +117,9 @@ void Player::draw() const {
     if (!collider) return;
 
     const Rectangle destination{
-        collider->bounds.x + collider->bounds.width * 0.5f - DrawSize * 0.5f,
-        collider->bounds.y + collider->bounds.height - DrawSize,
-        DrawSize, DrawSize};
+        collider->bounds.x + collider->bounds.width * 0.5f - DrawWidth * 0.5f,
+        collider->bounds.y + collider->bounds.height - DrawHeight,
+        DrawWidth, DrawHeight};
     animator_.draw(texture_, destination, {}, 0.0f, WHITE, facingLeft_);
 }
 
