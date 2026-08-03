@@ -1,10 +1,6 @@
-[submodule "external/raylib"]
-	path = external/raylib
-	url = https://github.com/raysan5/raylib.git
-[submodule "external/json"]
-	path = external/json
-	url = https://github.com/nlohmann/json.git
-[submodule "external/game-core"]
-	path = external/game-core
-	url = https://github.com/tomhaakon/cpp-game-core.git
-	branch = main
+[submodule "external/teya-core"]
+	path = external/teya-core
+	url = https://github.com/tomhaakon/teya-core.git
+[submodule "external/teya-2d"]
+	path = external/teya-2d
+	url = https://github.com/tomhaakon/teya-2d.git
