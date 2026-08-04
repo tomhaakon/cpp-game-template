@@ -1,4 +1,5 @@
 #include "world/World.h"
+#include <teya/core/Profile.h>
 
 namespace {
 constexpr float WorldWidth = 480.0f;
@@ -25,6 +26,7 @@ namespace game {
 World::~World() { shutdown(); }
 
 bool World::initialize() {
+    TEYA_PROFILE_ZONE_NAMED("World::initialize");
     shutdown();
 
     const bool mapLoaded = map_.load("assets/maps/template_map.tmj");
@@ -38,14 +40,19 @@ bool World::initialize() {
 }
 
 void World::shutdown() {
+    TEYA_PROFILE_ZONE_NAMED("World::shutdown");
     player_.shutdown();
     collisions_.clear();
     map_.unload();
 }
 
-void World::update(float deltaTime) { player_.update(deltaTime); }
+void World::update(float deltaTime) {
+    TEYA_PROFILE_ZONE_NAMED("World::update");
+    player_.update(deltaTime);
+}
 
 void World::draw() const {
+    TEYA_PROFILE_ZONE_NAMED("World::draw");
     map_.draw();
     player_.draw();
 }

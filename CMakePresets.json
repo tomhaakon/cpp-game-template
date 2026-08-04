@@ -49,6 +49,28 @@
             }
         },
         {
+            "name": "profile",
+            "displayName": "Profile (Tracy)",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/profile",
+            "architecture": {
+                "value": "x64",
+                "strategy": "external"
+            },
+            "toolset": {
+                "value": "host=x64",
+                "strategy": "external"
+            },
+            "warnings": {
+                "deprecated": false
+            },
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "CMAKE_EXPORT_COMPILE_COMMANDS": "ON",
+                "TEYA_ENABLE_PROFILING": "ON"
+            }
+        },
+        {
             "name": "windows-debug",
             "displayName": "Windows Debug (Visual Studio)",
             "generator": "Visual Studio 17 2022",
@@ -81,6 +103,10 @@
         {
             "name": "release",
             "configurePreset": "release"
+        },
+        {
+            "name": "profile",
+            "configurePreset": "profile"
         },
         {
             "name": "windows-debug",

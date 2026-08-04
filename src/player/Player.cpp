@@ -2,6 +2,7 @@
 
 #include <teya/core/Input.h>
 #include <teya/core/Log.h>
+#include <teya/core/Profile.h>
 
 #include <cmath>
 
@@ -26,6 +27,7 @@ Player::~Player() { shutdown(); }
 
 bool Player::initialize(teya::collision2d::World &world,
                         teya::collision2d::Vector2 position) {
+    TEYA_PROFILE_ZONE_NAMED("Player::initialize");
     shutdown();
     world_ = &world;
 
@@ -65,6 +67,7 @@ bool Player::initialize(teya::collision2d::World &world,
 }
 
 void Player::shutdown() {
+    TEYA_PROFILE_ZONE_NAMED("Player::shutdown");
     if (world_ && collider_ != teya::collision2d::InvalidColliderId) {
         (void)world_->remove(collider_);
     }
@@ -78,6 +81,7 @@ void Player::shutdown() {
 }
 
 void Player::update(float deltaTime) {
+    TEYA_PROFILE_ZONE_NAMED("Player::update");
     if (!world_ || collider_ == teya::collision2d::InvalidColliderId) return;
 
     using teya::core::Action;
@@ -111,6 +115,7 @@ void Player::update(float deltaTime) {
 }
 
 void Player::draw() const {
+    TEYA_PROFILE_ZONE_NAMED("Player::draw");
     if (!world_ || !IsTextureValid(texture_)) return;
 
     const auto *collider = world_->get(collider_);

@@ -4,8 +4,10 @@
 
 #include <raylib.h>
 #include <stdexcept>
+#include <teya/core/Profile.h>
 
 GameWindow::GameWindow() {
+    TEYA_PROFILE_ZONE_NAMED("GameWindow::GameWindow");
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
     InitWindow(GameConfig::CanvasWidth * GameConfig::InitialWindowScale,
                GameConfig::CanvasHeight * GameConfig::InitialWindowScale,

@@ -5,6 +5,7 @@
 
 #include <raylib.h>
 #include <teya/core/Input.h>
+#include <teya/core/Profile.h>
 
 namespace game::ui {
 namespace {
@@ -30,6 +31,7 @@ void drawCenteredText(const char *text, int centerX, int y, int fontSize, Color 
 PauseMenu::PauseMenu(const teya::graphics::PixelCanvas &canvas) : canvas_(canvas) {}
 
 PauseMenuAction PauseMenu::update() {
+    TEYA_PROFILE_ZONE_NAMED("PauseMenu::update");
     using teya::core::Action;
     using teya::core::PointerButton;
     namespace Input = teya::core::Input;
@@ -61,6 +63,7 @@ PauseMenuAction PauseMenu::update() {
 }
 
 void PauseMenu::draw() const {
+    TEYA_PROFILE_ZONE_NAMED("PauseMenu::draw");
     ClearBackground(style::Background);
 
     const int centerX = GameConfig::CanvasWidth / 2;

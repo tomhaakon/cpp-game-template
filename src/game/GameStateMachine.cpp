@@ -2,13 +2,18 @@
 
 #include <raylib.h>
 #include <teya/core/Input.h>
+#include <teya/core/Profile.h>
 
 GameStateMachine::GameStateMachine(const teya::graphics::PixelCanvas &canvas)
     : mainMenu_(canvas), pauseMenu_(canvas) {}
 
-bool GameStateMachine::initialize() { return world_.initialize(); }
+bool GameStateMachine::initialize() {
+    TEYA_PROFILE_ZONE_NAMED("GameStateMachine::initialize");
+    return world_.initialize();
+}
 
 GameAction GameStateMachine::update(float deltaTime) {
+    TEYA_PROFILE_ZONE_NAMED("GameStateMachine::update");
     switch (currentState_) {
     case GameState::MainMenu:
         return updateMainMenu();
@@ -56,6 +61,7 @@ GameAction GameStateMachine::updatePauseMenu() {
 }
 
 void GameStateMachine::draw() const {
+    TEYA_PROFILE_ZONE_NAMED("GameStateMachine::draw");
     switch (currentState_) {
     case GameState::MainMenu:
         mainMenu_.draw();

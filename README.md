@@ -65,6 +65,26 @@ cmake --preset release
 cmake --build --preset release
 ```
 
+### Profiling with Tracy
+
+The profiling preset builds optimized code with debug symbols and enables Tracy
+instrumentation across the game and Teya modules:
+
+```bash
+cmake --preset profile
+cmake --build --preset profile
+```
+
+Start the Tracy profiler application, connect to `teya_game`, and exercise the
+gameplay you want to measure. Capture begins only while Tracy is connected. The
+timeline includes complete frames, update and drawing stages, game states, UI,
+world and player work, animation, collision, map loading/rendering, input, JSON,
+logging, and pixel-canvas presentation. It also plots frame time and collider
+count.
+
+Normal debug and release presets leave profiling disabled. Their markers compile
+away and Tracy is not downloaded or linked.
+
 ### Visual Studio presets on Windows
 
 The portable `debug` and `release` presets use Ninja. VS Code installations that do not propagate the complete MSVC developer environment should select **Windows Debug (Visual Studio)** instead. It uses Visual Studio's CMake generator, which discovers the compiler, standard library, and Windows SDK without environment-variable setup:

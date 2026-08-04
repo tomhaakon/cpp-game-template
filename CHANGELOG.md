@@ -8,6 +8,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added an opt-in Tracy profiling preset with frame markers, timing plots, and
+  instrumentation across the game loop and major systems.
 - Added `GameConfig` as the shared source for canvas dimensions, initial window scale,
   target frame rate, and window title.
 - Added the RAII-based `GameWindow` class to manage raylib window creation and cleanup.
