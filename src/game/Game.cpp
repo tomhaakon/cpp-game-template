@@ -19,13 +19,6 @@ Game::Game() {
     teya::core::Log::info("Game", "end of Game::Game.");
 }
 
-Game::~Game() {
-    if (window_.isOpen()) {
-        world_.shutdown();
-        canvas_.shutdown();
-    }
-}
-
 void Game::run() {
     if (!window_.isOpen()) return;
     while (!WindowShouldClose()) {
