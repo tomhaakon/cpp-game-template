@@ -4,6 +4,11 @@
 #include <teya/core/Log.h>
 
 Game::Game() {
+    if (!window_.isOpen()) {
+        teya::core::Log::error("Graphics", "Could not create the game window");
+        return;
+    }
+
     if (!canvas_.initialize(GameConfig::CanvasWidth, GameConfig::CanvasHeight)) {
         teya::core::Log::error("Graphics", "Could not create the 480x320 pixel canvas");
     }
