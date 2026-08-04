@@ -13,13 +13,11 @@ namespace {
 constexpr int ItemCount = 2;
 
 Rectangle itemBounds(int index, int canvasWidth, int canvasHeight) {
-    const int menuHeight = ItemCount * style::ButtonHeight +
-                           (ItemCount - 1) * style::ButtonGap;
+    const int menuHeight = ItemCount * style::ButtonHeight + (ItemCount - 1) * style::ButtonGap;
     return {static_cast<float>((canvasWidth - style::ButtonWidth) / 2),
             static_cast<float>((canvasHeight - menuHeight) / 2 +
                                index * (style::ButtonHeight + style::ButtonGap)),
-            static_cast<float>(style::ButtonWidth),
-            static_cast<float>(style::ButtonHeight)};
+            static_cast<float>(style::ButtonWidth), static_cast<float>(style::ButtonHeight)};
 }
 
 void drawCenteredText(const char *text, int centerX, int y, int fontSize, Color color) {
@@ -47,18 +45,18 @@ MainMenuAction MainMenu::update() {
         selectedItem_ = (selectedItem_ + 1) % ItemCount;
     }
     for (int index = 0; index < ItemCount; ++index) {
-        if (CheckCollisionPointRec(pointerPosition,
-                                   itemBounds(index, GameConfig::CanvasWidth,
-                                              GameConfig::CanvasHeight))) {
+        if (CheckCollisionPointRec(pointerPosition, itemBounds(index, GameConfig::CanvasWidth,
+                                                               GameConfig::CanvasHeight))) {
             selectedItem_ = index;
             if (pointerPressed) {
-                return selectedItem_ == 0 ? MainMenuAction::StartGame
-                                          : MainMenuAction::Quit;
+                return selectedItem_ == 0 ? MainMenuAction::StartGame : MainMenuAction::Quit;
             }
         }
     }
-    if (Input::isPressed(Action::Cancel)) return MainMenuAction::Quit;
-    if (!Input::isPressed(Action::Confirm)) return MainMenuAction::None;
+    if (Input::isPressed(Action::Cancel))
+        return MainMenuAction::Quit;
+    if (!Input::isPressed(Action::Confirm))
+        return MainMenuAction::None;
 
     return selectedItem_ == 0 ? MainMenuAction::StartGame : MainMenuAction::Quit;
 }
@@ -73,20 +71,15 @@ void MainMenu::draw() const {
 
     constexpr const char *items[ItemCount] = {"START", "QUIT"};
     for (int index = 0; index < ItemCount; ++index) {
-        const Rectangle bounds = itemBounds(index, GameConfig::CanvasWidth,
-                                            GameConfig::CanvasHeight);
+        const Rectangle bounds =
+            itemBounds(index, GameConfig::CanvasWidth, GameConfig::CanvasHeight);
         const bool selected = index == selectedItem_;
         DrawRectangleRec(bounds, selected ? style::Accent : style::Panel);
         drawCenteredText(items[index], centerX,
                          static_cast<int>(bounds.y) +
                              (style::ButtonHeight - style::ButtonFontSize) / 2,
-                         style::ButtonFontSize,
-                         selected ? style::Background : style::Text);
+                         style::ButtonFontSize, selected ? style::Background : style::Text);
     }
-
-    drawCenteredText("W/S OR ARROWS - ENTER TO SELECT", centerX,
-                     GameConfig::CanvasHeight - style::HintFontSize - 16,
-                     style::HintFontSize, style::MutedText);
 }
 
 } // namespace game::ui
