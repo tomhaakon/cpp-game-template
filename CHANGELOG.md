@@ -25,6 +25,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Moved window configuration out of `Game` and into `GameWindow`.
 - Disabled raylib's default Escape-to-close behavior so Escape is reserved for game UI.
 - Added mouse selection and activation to the main-menu buttons.
+- Split `Game` update and drawing coordination into descriptive state-specific methods,
+  renamed its state member to `gameState_`, and moved menu sizing into the menu classes.
+- Moved pointer queries into `teya::core::Input` and canvas coordinate conversion into
+  the menus, reducing menu updates in `Game` to parameterless calls.
+- Added a lightweight `GameStateMachine` that owns gameplay and menus, handles their
+  transitions, and keeps `Game` focused on startup and the main render loop.
 - Made `PixelCanvas` automatically release its render texture on destruction.
 - Simplified `Game` cleanup to rely on the RAII destructors of the world, canvas, and
   window in their safe declaration order.

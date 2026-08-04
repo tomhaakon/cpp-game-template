@@ -1,6 +1,6 @@
 #pragma once
 
-#include <raylib.h>
+#include <teya/graphics/PixelCanvas.h>
 
 namespace game::ui {
 
@@ -8,11 +8,13 @@ enum class MainMenuAction { None, StartGame, Quit };
 
 class MainMenu {
   public:
-    [[nodiscard]] MainMenuAction update(Vector2 pointerPosition, bool pointerPressed,
-                                        int canvasWidth, int canvasHeight);
-    void draw(int canvasWidth, int canvasHeight) const;
+    explicit MainMenu(const teya::graphics::PixelCanvas &canvas);
+
+    [[nodiscard]] MainMenuAction update();
+    void draw() const;
 
   private:
+    const teya::graphics::PixelCanvas &canvas_;
     int selectedItem_ = 0;
 };
 

@@ -16,6 +16,8 @@ add_executable(teya_game
     src/game/Game.cpp
     src/game/Game.h
     src/game/GameConfig.h
+    src/game/GameStateMachine.cpp
+    src/game/GameStateMachine.h
     src/game/GameWindow.cpp
     src/game/GameWindow.h
     src/player/Player.cpp

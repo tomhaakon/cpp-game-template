@@ -1,5 +1,6 @@
 #include "ui/PauseMenu.h"
 
+#include "game/GameConfig.h"
 #include "ui/UiStyle.h"
 
 #include <raylib.h>
@@ -26,10 +27,16 @@ void drawCenteredText(const char *text, int centerX, int y, int fontSize, Color 
 
 } // namespace
 
-PauseMenuAction PauseMenu::update(Vector2 pointerPosition, bool pointerPressed,
-                                  int canvasWidth, int canvasHeight) {
+PauseMenu::PauseMenu(const teya::graphics::PixelCanvas &canvas) : canvas_(canvas) {}
+
+PauseMenuAction PauseMenu::update() {
     using teya::core::Action;
+    using teya::core::PointerButton;
     namespace Input = teya::core::Input;
+
+    const auto pointer = Input::pointerPosition();
+    const Vector2 pointerPosition = canvas_.windowToCanvas({pointer.x, pointer.y});
+    const bool pointerPressed = Input::isPressed(PointerButton::Primary);
 
     if (Input::isPressed(Action::Cancel)) return PauseMenuAction::Resume;
     if (Input::isPressed(Action::MoveUp)) {
@@ -40,7 +47,8 @@ PauseMenuAction PauseMenu::update(Vector2 pointerPosition, bool pointerPressed,
     }
     for (int index = 0; index < ItemCount; ++index) {
         if (CheckCollisionPointRec(pointerPosition,
-                                   itemBounds(index, canvasWidth, canvasHeight))) {
+                                   itemBounds(index, GameConfig::CanvasWidth,
+                                              GameConfig::CanvasHeight))) {
             selectedItem_ = index;
             if (pointerPressed) {
                 return selectedItem_ == 0 ? PauseMenuAction::Resume
@@ -52,16 +60,17 @@ PauseMenuAction PauseMenu::update(Vector2 pointerPosition, bool pointerPressed,
     return selectedItem_ == 0 ? PauseMenuAction::Resume : PauseMenuAction::Exit;
 }
 
-void PauseMenu::draw(int canvasWidth, int canvasHeight) const {
+void PauseMenu::draw() const {
     ClearBackground(style::Background);
 
-    const int centerX = canvasWidth / 2;
-    drawCenteredText("GAME PAUSED", centerX, canvasHeight / 4,
+    const int centerX = GameConfig::CanvasWidth / 2;
+    drawCenteredText("GAME PAUSED", centerX, GameConfig::CanvasHeight / 4,
                      style::TitleFontSize, style::Text);
 
     constexpr const char *items[ItemCount] = {"RESUME", "EXIT"};
     for (int index = 0; index < ItemCount; ++index) {
-        const Rectangle bounds = itemBounds(index, canvasWidth, canvasHeight);
+        const Rectangle bounds = itemBounds(index, GameConfig::CanvasWidth,
+                                            GameConfig::CanvasHeight);
         const bool selected = index == selectedItem_;
         DrawRectangleRec(bounds, selected ? style::Accent : style::Panel);
         drawCenteredText(items[index], centerX,
@@ -72,7 +81,7 @@ void PauseMenu::draw(int canvasWidth, int canvasHeight) const {
     }
 
     drawCenteredText("ESC TO RESUME", centerX,
-                     canvasHeight - style::HintFontSize - 16,
+                     GameConfig::CanvasHeight - style::HintFontSize - 16,
                      style::HintFontSize, style::MutedText);
 }
 

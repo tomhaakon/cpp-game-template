@@ -1,5 +1,6 @@
 #include "ui/MainMenu.h"
 
+#include "game/GameConfig.h"
 #include "ui/UiStyle.h"
 
 #include <raylib.h>
@@ -26,10 +27,16 @@ void drawCenteredText(const char *text, int centerX, int y, int fontSize, Color 
 
 } // namespace
 
-MainMenuAction MainMenu::update(Vector2 pointerPosition, bool pointerPressed,
-                                int canvasWidth, int canvasHeight) {
+MainMenu::MainMenu(const teya::graphics::PixelCanvas &canvas) : canvas_(canvas) {}
+
+MainMenuAction MainMenu::update() {
     using teya::core::Action;
+    using teya::core::PointerButton;
     namespace Input = teya::core::Input;
+
+    const auto pointer = Input::pointerPosition();
+    const Vector2 pointerPosition = canvas_.windowToCanvas({pointer.x, pointer.y});
+    const bool pointerPressed = Input::isPressed(PointerButton::Primary);
 
     if (Input::isPressed(Action::MoveUp)) {
         selectedItem_ = (selectedItem_ + ItemCount - 1) % ItemCount;
@@ -39,7 +46,8 @@ MainMenuAction MainMenu::update(Vector2 pointerPosition, bool pointerPressed,
     }
     for (int index = 0; index < ItemCount; ++index) {
         if (CheckCollisionPointRec(pointerPosition,
-                                   itemBounds(index, canvasWidth, canvasHeight))) {
+                                   itemBounds(index, GameConfig::CanvasWidth,
+                                              GameConfig::CanvasHeight))) {
             selectedItem_ = index;
             if (pointerPressed) {
                 return selectedItem_ == 0 ? MainMenuAction::StartGame
@@ -53,16 +61,17 @@ MainMenuAction MainMenu::update(Vector2 pointerPosition, bool pointerPressed,
     return selectedItem_ == 0 ? MainMenuAction::StartGame : MainMenuAction::Quit;
 }
 
-void MainMenu::draw(int canvasWidth, int canvasHeight) const {
+void MainMenu::draw() const {
     ClearBackground(style::Background);
 
-    const int centerX = canvasWidth / 2;
-    const int titleY = canvasHeight / 4;
+    const int centerX = GameConfig::CanvasWidth / 2;
+    const int titleY = GameConfig::CanvasHeight / 4;
     drawCenteredText("TEYA GAME", centerX, titleY, style::TitleFontSize, style::Text);
 
     constexpr const char *items[ItemCount] = {"START", "QUIT"};
     for (int index = 0; index < ItemCount; ++index) {
-        const Rectangle bounds = itemBounds(index, canvasWidth, canvasHeight);
+        const Rectangle bounds = itemBounds(index, GameConfig::CanvasWidth,
+                                            GameConfig::CanvasHeight);
         const bool selected = index == selectedItem_;
         DrawRectangleRec(bounds, selected ? style::Accent : style::Panel);
         drawCenteredText(items[index], centerX,
@@ -73,7 +82,7 @@ void MainMenu::draw(int canvasWidth, int canvasHeight) const {
     }
 
     drawCenteredText("W/S OR ARROWS - ENTER TO SELECT", centerX,
-                     canvasHeight - style::HintFontSize - 16,
+                     GameConfig::CanvasHeight - style::HintFontSize - 16,
                      style::HintFontSize, style::MutedText);
 }
 
