@@ -22,7 +22,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Made `PixelCanvas` automatically release its render texture on destruction.
 - Simplified `Game` cleanup to rely on the RAII destructors of the world, canvas, and
   window in their safe declaration order.
-- Prevented game-world and graphics initialization when window creation fails.
+- Changed essential game startup to fail fast when the window, canvas, or world cannot
+  initialize, with automatic RAII cleanup and a non-zero process exit.
 - Made tile indexing use unsigned size arithmetic to avoid signed integer overflow.
 - Made animation updates ignore non-finite delta times and reject non-finite frame
   durations.

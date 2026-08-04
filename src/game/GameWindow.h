@@ -10,8 +10,4 @@ class GameWindow {
     GameWindow(GameWindow &&) = delete;
     GameWindow &operator=(GameWindow &&) = delete;
 
-    [[nodiscard]] bool isOpen() const;
-
-  private:
-    bool open_ = false;
 };

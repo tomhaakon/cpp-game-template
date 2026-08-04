@@ -1,26 +1,21 @@
 #include "game/Game.h"
 #include "game/GameConfig.h"
 #include <raylib.h>
+#include <stdexcept>
 #include <teya/core/Log.h>
 
 Game::Game() {
-    if (!window_.isOpen()) {
-        teya::core::Log::error("Graphics", "Could not create the game window");
-        return;
-    }
-
     if (!canvas_.initialize(GameConfig::CanvasWidth, GameConfig::CanvasHeight)) {
-        teya::core::Log::error("Graphics", "Could not create the 480x320 pixel canvas");
+        throw std::runtime_error("Could not initialize the pixel canvas");
     }
     if (!world_.initialize()) {
-        teya::core::Log::error("World", "Could not initialize the game world");
+        throw std::runtime_error("Could not initialize the game world");
     }
 
     teya::core::Log::info("Game", "end of Game::Game.");
 }
 
 void Game::run() {
-    if (!window_.isOpen()) return;
     while (!WindowShouldClose()) {
         const float deltaTime = GetFrameTime();
         update(deltaTime);
