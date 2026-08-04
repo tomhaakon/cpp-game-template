@@ -1,5 +1,6 @@
 #pragma once
 
+#include "game/GameWindow.h"
 #include "world/World.h"
 
 #include <teya/graphics/PixelCanvas.h>
@@ -20,7 +21,7 @@ class Game {
     void update(float deltaTime);
     void draw();
 
-    bool windowOpen_ = false;
+    GameWindow window_;
     teya::graphics::PixelCanvas canvas_;
     game::World world_;
 };
