@@ -20,6 +20,11 @@ add_executable(teya_game
     src/game/GameWindow.h
     src/player/Player.cpp
     src/player/Player.h
+    src/ui/MainMenu.cpp
+    src/ui/MainMenu.h
+    src/ui/PauseMenu.cpp
+    src/ui/PauseMenu.h
+    src/ui/UiStyle.h
     src/world/World.cpp
     src/world/World.h
 )

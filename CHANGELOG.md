@@ -11,6 +11,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Added `GameConfig` as the shared source for canvas dimensions, initial window scale,
   target frame rate, and window title.
 - Added the RAII-based `GameWindow` class to manage raylib window creation and cleanup.
+- Added a game-specific pixel-canvas main menu with Start and Quit actions, keyboard
+  navigation, and shared UI styling under `src/ui`.
+- Added an in-game pause menu opened with Escape, including mouse-clickable Resume and
+  Exit actions.
 - Added regression coverage for non-finite animation timing and oversized tile-layer
   indexing.
 
@@ -19,6 +23,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 - Renamed the game resolution settings to `CanvasWidth`, `CanvasHeight`, and
   `InitialWindowScale` for clearer intent.
 - Moved window configuration out of `Game` and into `GameWindow`.
+- Disabled raylib's default Escape-to-close behavior so Escape is reserved for game UI.
+- Added mouse selection and activation to the main-menu buttons.
 - Made `PixelCanvas` automatically release its render texture on destruction.
 - Simplified `Game` cleanup to rely on the RAII destructors of the world, canvas, and
   window in their safe declaration order.

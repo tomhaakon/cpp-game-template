@@ -1,6 +1,8 @@
 #pragma once
 
 #include "game/GameWindow.h"
+#include "ui/MainMenu.h"
+#include "ui/PauseMenu.h"
 #include "world/World.h"
 
 #include <teya/graphics/PixelCanvas.h>
@@ -18,10 +20,16 @@ class Game {
     void run();
 
   private:
+    enum class State { MainMenu, Playing, PauseMenu };
+
     void update(float deltaTime);
     void draw();
 
     GameWindow window_;
     teya::graphics::PixelCanvas canvas_;
     game::World world_;
+    game::ui::MainMenu mainMenu_;
+    game::ui::PauseMenu pauseMenu_;
+    State state_ = State::MainMenu;
+    bool exitRequested_ = false;
 };

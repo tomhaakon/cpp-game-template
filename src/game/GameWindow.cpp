@@ -13,6 +13,7 @@ GameWindow::GameWindow() {
     if (!IsWindowReady()) {
         throw std::runtime_error("Could not create the game window");
     }
+    SetExitKey(KEY_NULL);
     SetTargetFPS(GameConfig::TargetFps);
 }
 
