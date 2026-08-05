@@ -29,7 +29,12 @@ void Game::run() {
         TEYA_PROFILE_ZONE_NAMED("Game frame");
         const float deltaTime = GetFrameTime();
         TEYA_PROFILE_PLOT("Frame time (ms)", deltaTime * 1000.0f);
+        const auto updateStart = std::chrono::steady_clock::now();
         update(deltaTime);
+#if TEYA_ENABLE_EDITOR
+        metrics_.updateMilliseconds = std::chrono::duration<float, std::milli>(
+            std::chrono::steady_clock::now() - updateStart).count();
+#endif
         draw();
         TEYA_PROFILE_FRAME();
     }
@@ -51,14 +56,24 @@ void Game::update(float deltaTime) {
 
 void Game::draw() {
     TEYA_PROFILE_ZONE_NAMED("Game::draw");
+#if TEYA_ENABLE_EDITOR
+    const auto gameDrawStart = std::chrono::steady_clock::now();
+#endif
     canvas_.begin();
     gameStates_.draw();
     canvas_.end();
+#if TEYA_ENABLE_EDITOR
+    metrics_.drawMilliseconds = std::chrono::duration<float, std::milli>(
+        std::chrono::steady_clock::now() - gameDrawStart).count();
+#endif
 
     BeginDrawing();
     ClearBackground(BLACK);
 #if TEYA_ENABLE_EDITOR
+    const auto editorStart = std::chrono::steady_clock::now();
     editor_->draw();
+    metrics_.editorMilliseconds = std::chrono::duration<float, std::milli>(
+        std::chrono::steady_clock::now() - editorStart).count();
 #else
     canvas_.present(GetScreenWidth(), GetScreenHeight());
 #endif
@@ -71,6 +86,6 @@ int Game::editorCanvasWidth() const{return canvas_.width();}
 int Game::editorCanvasHeight() const{return canvas_.height();}
 std::vector<teya::editor::RuntimeNode> Game::editorHierarchy() const{return {{1,0,"Game"},{2,1,gameStates_.stateName()},{3,2,"World"},{4,3,"Map"},{5,3,"Player"},{6,3,"Collision World"}};}
 std::vector<teya::editor::RuntimeProperty> Game::editorProperties(teya::editor::RuntimeObjectId id) const{return gameStates_.editorProperties(id);}
-teya::editor::EditorFrameMetrics Game::editorMetrics() const{auto m=metrics_;m.fps=static_cast<float>(GetFPS());m.frameMilliseconds=GetFrameTime()*1000.0f;m.canvasWidth=canvas_.width();m.canvasHeight=canvas_.height();m.currentState=gameStates_.stateName();m.currentMap=gameStates_.mapName();m.colliderCount=gameStates_.colliderCount();return m;}
+teya::editor::EditorFrameMetrics Game::editorMetrics() const{auto m=metrics_;m.fps=static_cast<float>(GetFPS());m.frameMilliseconds=GetFrameTime()*1000.0f;m.canvasWidth=canvas_.width();m.canvasHeight=canvas_.height();m.imageWidth=canvas_.width();m.imageHeight=canvas_.height();m.currentState=gameStates_.stateName();m.currentMap=gameStates_.mapName();m.colliderCount=gameStates_.colliderCount();return m;}
 void Game::requestEditorExit(){exitRequested_=true;}
 #endif
