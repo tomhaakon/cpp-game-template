@@ -8,7 +8,11 @@
 
 GameWindow::GameWindow() {
     TEYA_PROFILE_ZONE_NAMED("GameWindow::GameWindow");
-    SetConfigFlags(FLAG_WINDOW_RESIZABLE);
+    unsigned int windowFlags = FLAG_WINDOW_RESIZABLE;
+#if TEYA_ENABLE_EDITOR
+    windowFlags |= FLAG_WINDOW_MAXIMIZED;
+#endif
+    SetConfigFlags(windowFlags);
     InitWindow(GameConfig::CanvasWidth * GameConfig::InitialWindowScale,
                GameConfig::CanvasHeight * GameConfig::InitialWindowScale,
                GameConfig::WindowTitle);
