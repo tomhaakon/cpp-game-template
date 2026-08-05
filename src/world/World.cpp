@@ -52,6 +52,13 @@ void World::update(float deltaTime, bool gameplayInputEnabled) {
 }
 #if TEYA_ENABLE_EDITOR
 std::vector<teya::editor::RuntimeProperty> World::playerProperties() const{return player_.editorProperties();}
+void World::drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const {
+    if (settings.showWorldBounds)
+        DrawRectangleLinesEx({WorldMargin, WorldMargin, WorldWidth - WorldMargin * 2.0f,
+                              WorldHeight - WorldMargin * 2.0f},
+                             1.0f, GREEN);
+    player_.drawDebug(settings);
+}
 #endif
 
 void World::draw() const {

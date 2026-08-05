@@ -28,6 +28,9 @@ class Game {
     std::vector<teya::editor::RuntimeNode> editorHierarchy() const;
     std::vector<teya::editor::RuntimeProperty> editorProperties(teya::editor::RuntimeObjectId id) const;
     teya::editor::EditorFrameMetrics editorMetrics() const;
+    void setEditorDebugDrawSettings(const teya::editor::EditorDebugDrawSettings &settings) {
+        debugDrawSettings_ = settings;
+    }
     Player& editorPlayer() { return gameStates_.editorPlayer(); }
     void requestGameRestart(bool pauseAfterRestart);
     void requestEditorExit();
@@ -45,6 +48,7 @@ class Game {
     std::unique_ptr<GameEditorHost> editorHost_;
     std::unique_ptr<teya::editor::Editor> editor_;
     teya::editor::EditorFrameMetrics metrics_;
+    teya::editor::EditorDebugDrawSettings debugDrawSettings_;
     bool restartRequested_ = false;
 #endif
 };

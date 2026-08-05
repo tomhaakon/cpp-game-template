@@ -22,9 +22,15 @@ bool validate(const std::vector<AttachmentObject> &objects, std::string &error) 
             return false;
         }
         if (!std::isfinite(object.pivot.x) || !std::isfinite(object.pivot.y) ||
+            !std::isfinite(object.effectTip.x) || !std::isfinite(object.effectTip.y) ||
             !std::isfinite(object.positionOffset.x) || !std::isfinite(object.positionOffset.y) ||
             !std::isfinite(object.rotationOffsetDegrees) || !std::isfinite(object.scale.x) ||
-            !std::isfinite(object.scale.y) || object.scale.x <= 0 || object.scale.y <= 0) {
+            !std::isfinite(object.scale.y) || object.scale.x <= 0 || object.scale.y <= 0 ||
+            !std::isfinite(object.trailLifetimeSeconds) || object.trailLifetimeSeconds <= 0 ||
+            !std::isfinite(object.trailWidth) || object.trailWidth <= 0 ||
+            !std::isfinite(object.trailOpacity) || object.trailOpacity < 0 ||
+            object.trailOpacity > 1 || !std::isfinite(object.trailSmoothing) ||
+            object.trailSmoothing < 0 || object.trailSmoothing >= 1) {
             error = "Attachment transforms must be finite and scale must be positive";
             return false;
         }
@@ -55,6 +61,7 @@ bool loadAttachmentObjects(const std::filesystem::path &path,
             object.texturePath = entry.at("texture").get<std::string>();
             object.socketName = entry.value("socket", "weapon_hand");
             object.pivot = vector(entry.value("pivot", json::object()));
+            object.effectTip = vector(entry.value("effectTip", json::object()));
             object.positionOffset = vector(entry.value("positionOffset", json::object()));
             object.rotationOffsetDegrees = entry.value("rotationOffsetDegrees", 0.0f);
             object.scale = vector(entry.value("scale", json::object()), {1, 1});
@@ -62,6 +69,12 @@ bool loadAttachmentObjects(const std::filesystem::path &path,
                                ? teya::animation::AttachmentLayer::BehindOwner
                                : teya::animation::AttachmentLayer::InFrontOfOwner;
             object.visible = entry.value("visible", true);
+            object.smoothRotationFiltering = entry.value("smoothRotationFiltering", false);
+            object.trailEnabled = entry.value("trailEnabled", true);
+            object.trailLifetimeSeconds = entry.value("trailLifetimeSeconds", 0.25f);
+            object.trailWidth = entry.value("trailWidth", 9.0f);
+            object.trailOpacity = entry.value("trailOpacity", 0.45f);
+            object.trailSmoothing = entry.value("trailSmoothing", 0.35f);
             loaded.push_back(std::move(object));
         }
         if (!validate(loaded, error))
@@ -86,12 +99,19 @@ bool saveAttachmentObjects(const std::filesystem::path &path,
              {"texture", object.texturePath},
              {"socket", object.socketName},
              {"pivot", vector(object.pivot)},
+             {"effectTip", vector(object.effectTip)},
              {"positionOffset", vector(object.positionOffset)},
              {"rotationOffsetDegrees", object.rotationOffsetDegrees},
              {"scale", vector(object.scale)},
              {"layer", object.layer == teya::animation::AttachmentLayer::BehindOwner ? "behind"
                                                                                       : "in_front"},
-             {"visible", object.visible}});
+             {"visible", object.visible},
+             {"smoothRotationFiltering", object.smoothRotationFiltering},
+             {"trailEnabled", object.trailEnabled},
+             {"trailLifetimeSeconds", object.trailLifetimeSeconds},
+             {"trailWidth", object.trailWidth},
+             {"trailOpacity", object.trailOpacity},
+             {"trailSmoothing", object.trailSmoothing}});
     std::error_code ec;
     std::filesystem::create_directories(path.parent_path(), ec);
     std::ofstream output(path, std::ios::trunc);

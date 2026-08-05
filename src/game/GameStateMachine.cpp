@@ -63,6 +63,10 @@ const char* GameStateMachine::mapName() const{return world_.mapName();}
 int GameStateMachine::colliderCount() const{return world_.colliderCount();}
 #if TEYA_ENABLE_EDITOR
 std::vector<teya::editor::RuntimeProperty> GameStateMachine::editorProperties(teya::editor::RuntimeObjectId id) const { if(id==5)return world_.playerProperties();if(id==4)return {{"Map",world_.mapName()}};if(id==6)return {{"Collider count",std::to_string(world_.colliderCount())}};return {{"Name",id==1?"Game":id==3?"World":stateName()}}; }
+void GameStateMachine::drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const {
+    if (currentState_ == GameState::Playing)
+        world_.drawDebug(settings);
+}
 #endif
 
 GameAction GameStateMachine::updatePauseMenu(bool gameplayInputEnabled,

@@ -10,6 +10,10 @@
                 "x": 5.0,
                 "y": 27.0
             },
+            "effectTip": {
+                "x": 29.0,
+                "y": 0.75
+            },
             "positionOffset": {
                 "x": 0.0,
                 "y": 0.0
@@ -20,7 +24,13 @@
                 "y": 1.0
             },
             "layer": "in_front",
-            "visible": true
+            "visible": true,
+            "smoothRotationFiltering": true,
+            "trailEnabled": true,
+            "trailLifetimeSeconds": 0.33000001311302185,
+            "trailWidth": 10.300000190734863,
+            "trailOpacity": 0.44999998807907104,
+            "trailSmoothing": 0.3499999940395355
         }
     ]
 }

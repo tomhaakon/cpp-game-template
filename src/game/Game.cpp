@@ -79,6 +79,9 @@ void Game::draw() {
 #endif
     canvas_.begin();
     gameStates_.draw();
+#if TEYA_ENABLE_EDITOR
+    gameStates_.drawDebug(debugDrawSettings_);
+#endif
     canvas_.end();
 #if TEYA_ENABLE_EDITOR
     metrics_.drawMilliseconds = std::chrono::duration<float, std::milli>(

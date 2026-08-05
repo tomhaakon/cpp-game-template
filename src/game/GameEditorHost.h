@@ -14,6 +14,7 @@ class GameEditorHost final : public teya::editor::EditorHost {
     std::vector<teya::editor::RuntimeProperty>
     inspectObject(teya::editor::RuntimeObjectId id) const override;
     teya::editor::EditorFrameMetrics frameMetrics() const override;
+    void setDebugDrawSettings(const teya::editor::EditorDebugDrawSettings &settings) override;
     std::vector<teya::editor::EditableAnimationAssetInfo> editableAnimationAssets() const override;
     teya::editor::AnimationAssetOperationResult
     createAnimationAsset(std::string_view name) override;

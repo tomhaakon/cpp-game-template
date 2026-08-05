@@ -123,6 +123,8 @@ void Player::shutdown() {
     animation_.replaceAsset({});
     recentEvents_.clear();
     slashEffectSeconds_ = 0;
+    swordTrailActive_ = false;
+    swordTrail_.clear();
 }
 void Player::update(float dt, bool inputEnabled) {
     TEYA_PROFILE_ZONE_NAMED("Player::update");
@@ -159,6 +161,7 @@ void Player::update(float dt, bool inputEnabled) {
     animation_.setAction(!moving ? "idle" : running ? "run" : "walk");
     animation_.update(dt);
     handleEvents();
+    updateSwordTrail(dt);
     slashEffectSeconds_ = std::max(0.0f, slashEffectSeconds_ - dt);
 }
 void Player::handleEvents() {
@@ -245,6 +248,122 @@ void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 top
     }
 }
 
+std::optional<Vector2> Player::attachmentTipWorld() const {
+    if (!world_ || !animationAsset_ || !IsTextureValid(attachmentTexture_))
+        return std::nullopt;
+    const auto *collider = world_->get(collider_);
+    const auto *frame = animation_.playback().currentFrame();
+    if (!collider || !frame)
+        return std::nullopt;
+    const auto source = teya::animation::animationSourceRectangle(*animationAsset_, *frame);
+    if (!source)
+        return std::nullopt;
+    const auto object =
+        std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(), [&](const auto &entry) {
+            return entry.id == equippedAttachmentId_;
+        });
+    if (object == attachmentObjects_.end() || !object->visible)
+        return std::nullopt;
+    auto socket = std::find_if(frame->sockets.begin(), frame->sockets.end(),
+                               [&](const auto &entry) {
+                                   return entry.name == object->socketName && entry.visible;
+                               });
+    if (socket == frame->sockets.end())
+        return std::nullopt;
+    const bool mirrored = currentClipMirrored();
+    auto displayedSocket = mirrored ? teya::animation::mirrorSocket(*socket, source->width)
+                                    : *socket;
+    Vector2 topLeft{collider->bounds.x + collider->bounds.width * .5f - source->width * .5f,
+                    collider->bounds.y + collider->bounds.height - source->height};
+    topLeft =
+        teya::animation::applyPositionPolicy(topLeft, animationAsset_->render.roundOwnerPosition);
+    Vector2 anchor{topLeft.x + displayedSocket.position.x +
+                       (mirrored ? -object->positionOffset.x : object->positionOffset.x),
+                   topLeft.y + displayedSocket.position.y + object->positionOffset.y};
+    const float scaleX = displayedSocket.scale.x * object->scale.x;
+    const float scaleY = displayedSocket.scale.y * object->scale.y;
+    const float pivotX = mirrored ? attachmentTexture_.width - object->pivot.x : object->pivot.x;
+    const float tipX = mirrored ? attachmentTexture_.width - object->effectTip.x
+                                : object->effectTip.x;
+    const float tipY = object->effectTip.y;
+    const float localX = (tipX - pivotX) * scaleX;
+    const float localY = (tipY - object->pivot.y) * scaleY;
+    const float rotation =
+        (displayedSocket.rotationDegrees +
+         (mirrored ? -object->rotationOffsetDegrees : object->rotationOffsetDegrees)) *
+        DEG2RAD;
+    const float cosine = std::cos(rotation), sine = std::sin(rotation);
+    return Vector2{anchor.x + localX * cosine - localY * sine,
+                   anchor.y + localX * sine + localY * cosine};
+}
+
+void Player::updateSwordTrail(float deltaTime) {
+    const auto object =
+        std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(), [&](const auto &entry) {
+            return entry.id == equippedAttachmentId_;
+        });
+    const float trailLifetime = object == attachmentObjects_.end()
+                                    ? 0.25f
+                                    : object->trailLifetimeSeconds;
+    for (auto &sample : swordTrail_)
+        sample.ageSeconds += std::max(0.0f, deltaTime);
+    swordTrail_.erase(std::remove_if(swordTrail_.begin(), swordTrail_.end(),
+                                     [&](const auto &sample) {
+                                         return sample.ageSeconds >= trailLifetime;
+                                     }),
+                      swordTrail_.end());
+    const bool attacking = object != attachmentObjects_.end() && object->trailEnabled &&
+                           animation_.currentAction() == "attack";
+    if (attacking && !swordTrailActive_)
+        swordTrail_.clear();
+    swordTrailActive_ = attacking;
+    if (!attacking)
+        return;
+    const auto tip = attachmentTipWorld();
+    if (!tip)
+        return;
+    Vector2 smoothedTip = *tip;
+    if (!swordTrail_.empty()) {
+        const float smoothing = std::clamp(object->trailSmoothing, 0.0f, .95f);
+        smoothedTip.x = tip->x * (1.0f - smoothing) +
+                        swordTrail_.back().position.x * smoothing;
+        smoothedTip.y = tip->y * (1.0f - smoothing) +
+                        swordTrail_.back().position.y * smoothing;
+    }
+    if (!swordTrail_.empty()) {
+        const float dx = smoothedTip.x - swordTrail_.back().position.x;
+        const float dy = smoothedTip.y - swordTrail_.back().position.y;
+        if (dx * dx + dy * dy < 0.04f)
+            return;
+    }
+    constexpr std::size_t MaxTrailSamples = 24;
+    if (swordTrail_.size() == MaxTrailSamples)
+        swordTrail_.erase(swordTrail_.begin());
+    swordTrail_.push_back({smoothedTip, 0.0f});
+}
+
+void Player::drawSwordTrail() const {
+    if (swordTrail_.size() < 2)
+        return;
+    const auto object =
+        std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(), [&](const auto &entry) {
+            return entry.id == equippedAttachmentId_;
+        });
+    if (object == attachmentObjects_.end() || !object->trailEnabled)
+        return;
+    for (std::size_t i = 1; i < swordTrail_.size(); ++i) {
+        const float life = std::clamp(
+            1.0f - swordTrail_[i - 1].ageSeconds / object->trailLifetimeSeconds, 0.0f, 1.0f);
+        const unsigned char alpha =
+            static_cast<unsigned char>(255.0f * object->trailOpacity * life);
+        DrawLineEx(swordTrail_[i - 1].position, swordTrail_[i].position,
+                   object->trailWidth * life + 1.0f, Color{35, 115, 240, alpha});
+        DrawLineEx(swordTrail_[i - 1].position, swordTrail_[i].position,
+                   std::max(1.0f, object->trailWidth * .22f),
+                   Color{120, 205, 255, static_cast<unsigned char>(alpha * .65f)});
+    }
+}
+
 bool Player::loadAttachmentObjects(std::string &error) {
     std::vector<AttachmentObject> objects;
     if (!::loadAttachmentObjects(teya::core::assets::path("attachments/player.attachments.json"),
@@ -272,9 +391,11 @@ bool Player::replaceAttachmentObjects(std::vector<AttachmentObject> objects, std
         error = "Could not load attachment texture: " + selected->texturePath;
         return false;
     }
-    if (animationAsset_)
-        SetTextureFilter(replacement,
-                         teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));
+    SetTextureFilter(replacement, selected->smoothRotationFiltering
+                                      ? TEXTURE_FILTER_BILINEAR
+                                      : animationAsset_ ? teya::animation::raylibTextureFilter(
+                                                            animationAsset_->render.textureFilter)
+                                                        : TEXTURE_FILTER_POINT);
     if (IsTextureValid(attachmentTexture_))
         UnloadTexture(attachmentTexture_);
     attachmentTexture_ = replacement;
@@ -298,9 +419,11 @@ bool Player::equipAttachment(std::uint64_t objectId, std::string &error) {
         error = "Could not load attachment texture: " + found->texturePath;
         return false;
     }
-    if (animationAsset_)
-        SetTextureFilter(replacement,
-                         teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));
+    SetTextureFilter(replacement, found->smoothRotationFiltering
+                                      ? TEXTURE_FILTER_BILINEAR
+                                      : animationAsset_ ? teya::animation::raylibTextureFilter(
+                                                            animationAsset_->render.textureFilter)
+                                                        : TEXTURE_FILTER_POINT);
     if (IsTextureValid(attachmentTexture_))
         UnloadTexture(attachmentTexture_);
     attachmentTexture_ = replacement;
@@ -329,6 +452,7 @@ void Player::draw() const {
     if (mirrored)
         src.width = -src.width;
     DrawTexturePro(texture_, src, {topLeft.x, topLeft.y, w, h}, {0, 0}, 0, WHITE);
+    drawSwordTrail();
     drawAttachments(teya::animation::AttachmentLayer::InFrontOfOwner, topLeft);
     if (slashEffectSeconds_ > 0) {
         Vector2 center{topLeft.x + w * .5f, topLeft.y + h * .5f};
@@ -336,6 +460,75 @@ void Player::draw() const {
     }
 }
 #if TEYA_ENABLE_EDITOR
+void Player::drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const {
+    if (!world_ || !animationAsset_)
+        return;
+    const auto *collider = world_->get(collider_);
+    const auto *frame = animation_.playback().currentFrame();
+    if (!collider || !frame)
+        return;
+    if (settings.showPlayerCollider)
+        DrawRectangleLinesEx({collider->bounds.x, collider->bounds.y, collider->bounds.width,
+                              collider->bounds.height},
+                             1.0f, RED);
+    const Vector2 origin{collider->bounds.x + collider->bounds.width * .5f,
+                         collider->bounds.y + collider->bounds.height};
+    if (settings.showPlayerOrigin) {
+        DrawLineV({origin.x - 5, origin.y}, {origin.x + 5, origin.y}, YELLOW);
+        DrawLineV({origin.x, origin.y - 5}, {origin.x, origin.y + 5}, YELLOW);
+        DrawCircleLines(static_cast<int>(origin.x), static_cast<int>(origin.y), 3, YELLOW);
+    }
+    const auto source = teya::animation::animationSourceRectangle(*animationAsset_, *frame);
+    if (!source)
+        return;
+    Vector2 topLeft{origin.x - source->width * .5f, origin.y - source->height};
+    topLeft =
+        teya::animation::applyPositionPolicy(topLeft, animationAsset_->render.roundOwnerPosition);
+    const bool mirrored = currentClipMirrored();
+    if (settings.showAnimationHitboxes)
+        for (auto hitbox : frame->hitboxes) {
+            if (mirrored)
+                hitbox = teya::animation::mirrorHitbox(hitbox, source->width);
+            const auto &bounds = hitbox.localBounds;
+            const Vector2 center{bounds.x + bounds.width * .5f,
+                                 bounds.y + bounds.height * .5f};
+            const float radians = hitbox.rotationDegrees * DEG2RAD;
+            const float cosine = std::cos(radians), sine = std::sin(radians);
+            auto worldPoint = [&](float x, float y) {
+                x -= center.x;
+                y -= center.y;
+                return Vector2{topLeft.x + center.x + x * cosine - y * sine,
+                               topLeft.y + center.y + x * sine + y * cosine};
+            };
+            const Vector2 corners[] = {worldPoint(bounds.x, bounds.y),
+                                       worldPoint(bounds.x + bounds.width, bounds.y),
+                                       worldPoint(bounds.x + bounds.width,
+                                                  bounds.y + bounds.height),
+                                       worldPoint(bounds.x, bounds.y + bounds.height)};
+            const Color color = hitbox.active ? MAGENTA : GRAY;
+            for (int corner = 0; corner < 4; ++corner)
+                DrawLineV(corners[corner], corners[(corner + 1) % 4], color);
+        }
+    if (settings.showAnimationSockets)
+        for (auto socket : frame->sockets) {
+            if (mirrored)
+                socket = teya::animation::mirrorSocket(socket, source->width);
+            const Vector2 point{topLeft.x + socket.position.x, topLeft.y + socket.position.y};
+            const float radians = socket.rotationDegrees * DEG2RAD;
+            DrawCircleV(point, 2.0f, SKYBLUE);
+            DrawLineV(point, {point.x + std::cos(radians) * 10.0f,
+                              point.y + std::sin(radians) * 10.0f}, SKYBLUE);
+        }
+    if (settings.showAnimationMarkers)
+        for (auto marker : frame->markers) {
+            if (mirrored)
+                marker = teya::animation::mirrorMarker(marker, source->width);
+            const Vector2 point{topLeft.x + marker.position.x, topLeft.y + marker.position.y};
+            DrawLineV({point.x - 4, point.y}, {point.x + 4, point.y}, LIME);
+            DrawLineV({point.x, point.y - 4}, {point.x, point.y + 4}, LIME);
+        }
+}
+
 bool Player::applyAnimationAsset(std::shared_ptr<const teya::animation::AnimationAsset> asset,
                                  std::string &error) {
     TEYA_PROFILE_ZONE_NAMED("Player::applyAnimationAsset");
@@ -372,9 +565,17 @@ bool Player::applyAnimationAsset(std::shared_ptr<const teya::animation::Animatio
     (void)replacementController.setAction(animation_.baseAction());
     SetTextureFilter(replacement,
                      teya::animation::raylibTextureFilter(asset->render.textureFilter));
-    if (IsTextureValid(attachmentTexture_))
+    if (IsTextureValid(attachmentTexture_)) {
+        const auto equipped = std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(),
+                                           [&](const auto &object) {
+                                               return object.id == equippedAttachmentId_;
+                                           });
         SetTextureFilter(attachmentTexture_,
-                         teya::animation::raylibTextureFilter(asset->render.textureFilter));
+                         equipped != attachmentObjects_.end() &&
+                                 equipped->smoothRotationFiltering
+                             ? TEXTURE_FILTER_BILINEAR
+                             : teya::animation::raylibTextureFilter(asset->render.textureFilter));
+    }
     auto oldTexture = texture_;
     animationAsset_ = std::move(asset);
     texture_ = replacement;

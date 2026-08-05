@@ -89,6 +89,10 @@ GameEditorHost::inspectObject(teya::editor::RuntimeObjectId id) const {
 teya::editor::EditorFrameMetrics GameEditorHost::frameMetrics() const {
     return game_.editorMetrics();
 }
+void GameEditorHost::setDebugDrawSettings(
+    const teya::editor::EditorDebugDrawSettings &settings) {
+    game_.setEditorDebugDrawSettings(settings);
+}
 std::vector<teya::editor::EditableAnimationAssetInfo>
 GameEditorHost::editableAnimationAssets() const {
     std::vector<teya::editor::EditableAnimationAssetInfo> result;
@@ -294,17 +298,28 @@ GameEditorHost::attachmentPreviews(std::uint64_t) const {
             texture = attachmentTextures_.emplace(object.id, loaded).first;
             attachmentTexturePaths_[object.id] = object.texturePath;
         }
+        if (IsTextureValid(texture->second))
+            SetTextureFilter(texture->second, object.smoothRotationFiltering
+                                                  ? TEXTURE_FILTER_BILINEAR
+                                                  : TEXTURE_FILTER_POINT);
         result.push_back({object.id,
                           object.name,
                           object.socketName,
                           object.texturePath,
                           texture->second,
                           object.pivot,
+                          object.effectTip,
                           object.positionOffset,
                           object.rotationOffsetDegrees,
                           object.scale,
                           object.layer,
                           object.visible,
+                          object.smoothRotationFiltering,
+                          object.trailEnabled,
+                          object.trailLifetimeSeconds,
+                          object.trailWidth,
+                          object.trailOpacity,
+                          object.trailSmoothing,
                           false});
     }
     return result;
@@ -323,11 +338,18 @@ teya::editor::AttachmentObjectSaveResult GameEditorHost::saveAttachmentObjects(
                            entry.texturePath,
                            entry.socketName,
                            entry.pivot,
+                           entry.effectTip,
                            entry.positionOffset,
                            entry.rotationOffsetDegrees,
                            entry.scale,
                            entry.layer,
-                           entry.visible});
+                           entry.visible,
+                           entry.smoothRotationFiltering,
+                           entry.trailEnabled,
+                           entry.trailLifetimeSeconds,
+                           entry.trailWidth,
+                           entry.trailOpacity,
+                           entry.trailSmoothing});
     }
     if (objects.empty())
         return {false, "Keep at least one attachment object"};

@@ -31,6 +31,7 @@ class World {
 #if TEYA_ENABLE_EDITOR
     [[nodiscard]] std::vector<teya::editor::RuntimeProperty> playerProperties() const;
     [[nodiscard]] Player& editorPlayer() { return player_; }
+    void drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const;
 #endif
 
   private:
