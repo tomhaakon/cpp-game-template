@@ -451,7 +451,7 @@
                     "markers": [],
                     "sockets": [
                         {
-                            "layer": "behind_owner",
+                            "layer": "in_front",
                             "name": "weapon",
                             "position": {
                                 "x": 16.0,
@@ -476,7 +476,7 @@
                     "markers": [],
                     "sockets": [
                         {
-                            "layer": "behind_owner",
+                            "layer": "in_front",
                             "name": "weapon",
                             "position": {
                                 "x": 19.0,
@@ -501,7 +501,7 @@
                     "markers": [],
                     "sockets": [
                         {
-                            "layer": "behind_owner",
+                            "layer": "in_front",
                             "name": "weapon",
                             "position": {
                                 "x": 16.0,
@@ -526,7 +526,7 @@
                     "markers": [],
                     "sockets": [
                         {
-                            "layer": "behind_owner",
+                            "layer": "in_front",
                             "name": "weapon",
                             "position": {
                                 "x": 25.0,

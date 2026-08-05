@@ -200,8 +200,7 @@ void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 top
         const bool usesObject = objectIt != attachmentObjects_.end() && objectIt->visible &&
                                 socket.name == objectIt->socketName &&
                                 IsTextureValid(attachmentTexture_);
-        const auto effectiveLayer = usesObject ? objectIt->layer : socket.layer;
-        if (effectiveLayer != layer || !socket.visible)
+        if (socket.layer != layer || !socket.visible)
             continue;
         if (usesObject) {
             const bool mirrored = currentClipMirrored();
