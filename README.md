@@ -189,6 +189,23 @@ template's submodule revision. The public declaration is in
 
 To start a new game, rename the CMake project and executable target in `CMakeLists.txt`, update the target references in `.vscode/tasks.json`, and replace the title passed to `Game` in `src/main.cpp`.
 
+## Animation Editor
+
+Build the editor preset and open **View > Animation Editor**. The template registers
+`assets/animations/player.animation.json` through `GameEditorHost`, supplies the
+loaded player texture and its dimensions, and validates and saves using `teya-2d`.
+Save writes the asset and then replaces the player's immutable asset snapshot;
+temporary Apply skips the write and remains visibly dirty. Invalid copies never
+reach the running player, and replacement repairs its current clip/frame where the
+runtime can do so.
+
+Pixel assets use their nearest-filter and rounding policies, while smooth assets
+retain linear filtering and subpixel transforms. Game code continues to interpret
+events such as `spawn_slash`; editor preview events stay local. Attachment preview
+textures can be returned from `EditorHost::attachmentPreviews` with a socket name
+and pivot. The current template uses the generic fallback orientation graphic, so
+the editor contains no sword or Player dependency.
+
 ## Troubleshooting
 
 If configuration reports missing raylib or nlohmann/json sources, run:

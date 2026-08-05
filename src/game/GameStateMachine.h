@@ -24,6 +24,7 @@ class GameStateMachine {
     [[nodiscard]] int colliderCount() const;
 #if TEYA_ENABLE_EDITOR
     [[nodiscard]] std::vector<teya::editor::RuntimeProperty> editorProperties(teya::editor::RuntimeObjectId id) const;
+    [[nodiscard]] Player& editorPlayer() { return world_.editorPlayer(); }
 #endif
 
   private:

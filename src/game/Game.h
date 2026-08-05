@@ -28,6 +28,7 @@ class Game {
     std::vector<teya::editor::RuntimeNode> editorHierarchy() const;
     std::vector<teya::editor::RuntimeProperty> editorProperties(teya::editor::RuntimeObjectId id) const;
     teya::editor::EditorFrameMetrics editorMetrics() const;
+    Player& editorPlayer() { return gameStates_.editorPlayer(); }
     void requestEditorExit();
 #endif
 

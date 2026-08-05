@@ -30,6 +30,7 @@ class World {
     [[nodiscard]] int colliderCount() const { return static_cast<int>(collisions_.size()); }
 #if TEYA_ENABLE_EDITOR
     [[nodiscard]] std::vector<teya::editor::RuntimeProperty> playerProperties() const;
+    [[nodiscard]] Player& editorPlayer() { return player_; }
 #endif
 
   private:

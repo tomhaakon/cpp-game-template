@@ -8,6 +8,10 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added a dockable animation-authoring workflow with independent working copies,
+  clip/frame timeline editing, runtime metadata inspectors, pixel and smooth
+  previews, bounded undo/redo and clipboard state, validation, save/reload, and
+  safe live or temporary application through the generic editor host.
 - Added versioned animation assets with grid/atlas frames, pixel and smooth render
   policies, validation, events, sockets, hitboxes, markers, mirroring, and safe playback.
 - Added asset-driven Player animation, socket-following weapon diagnostics, slash

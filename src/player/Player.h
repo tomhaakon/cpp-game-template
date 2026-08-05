@@ -15,6 +15,10 @@ public:
     void update(float deltaTime,bool inputEnabled=true); void draw() const;
 #if TEYA_ENABLE_EDITOR
     std::vector<teya::editor::RuntimeProperty> editorProperties() const;
+    [[nodiscard]] const std::shared_ptr<const teya::animation::AnimationAsset>& animationAsset() const { return animationAsset_; }
+    [[nodiscard]] Texture2D animationTexture() const { return texture_; }
+    [[nodiscard]] const std::string& animationAssetPath() const { return animationAssetPath_; }
+    bool applyAnimationAsset(std::shared_ptr<const teya::animation::AnimationAsset> asset, std::string& error);
 #endif
 private:
     enum class MovementState{Idle,Walk,Run};
