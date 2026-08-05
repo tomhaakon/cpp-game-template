@@ -206,6 +206,30 @@ textures can be returned from `EditorHost::attachmentPreviews` with a socket nam
 and pivot. The current template uses the generic fallback orientation graphic, so
 the editor contains no sword or Player dependency.
 
+The Player now drives animation through `teya::animation::AnimationController`.
+Input only determines gameplay action and direction; it does not select frames
+directly. AI-controlled entities can use the identical interface:
+
+```cpp
+animator.setDirection(AnimationDirection::Left);
+animator.setAction(monsterIsMoving ? "walk" : "idle");
+if (monsterStartsAttack)
+    animator.trigger("attack");
+animator.update(deltaTime);
+```
+
+Add game-specific bindings when constructing an entity's controller. Looping
+actions remain active, prioritized one-shots temporarily override them, and the
+controller returns automatically when a one-shot finishes.
+
+While the Animation Editor is active, open **Action Bindings** in Inspector.
+Select a clip and choose **Bind selected clip**. Names ending in `_down`, `_up`,
+`_right`, or `_left` are split automatically: `walk_down` becomes action `walk`,
+direction `Down`, and clip `walk_down`. Expand a binding to change its action,
+direction, clip, looping/one-shot mode, or interruption priority. Save validates
+the mapping and applies it to the running Player; older assets without mappings
+continue to use the template's fallback conventions.
+
 ## Troubleshooting
 
 If configuration reports missing raylib or nlohmann/json sources, run:

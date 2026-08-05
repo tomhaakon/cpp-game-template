@@ -54,7 +54,8 @@
                 }
             ],
             "looping": true,
-            "name": "idle"
+            "mirrored": false,
+            "name": "idle_down"
         },
         {
             "frames": [
@@ -130,7 +131,209 @@
                 }
             ],
             "looping": true,
-            "name": "walk"
+            "mirrored": false,
+            "name": "walk_down"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 60
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 61
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 62
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 63
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 64
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 65
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": false,
+            "name": "walk_up"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 24
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 25
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 26
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 27
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 28
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 29
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": false,
+            "name": "walk_left"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 24
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 25
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 26
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 27
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 28
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 29
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": true,
+            "name": "walk_right"
         },
         {
             "frames": [
@@ -196,6 +399,7 @@
                 }
             ],
             "looping": true,
+            "mirrored": false,
             "name": "run"
         },
         {
@@ -418,6 +622,7 @@
                 }
             ],
             "looping": false,
+            "mirrored": false,
             "name": "sword_attack"
         },
         {
@@ -429,14 +634,143 @@
                     "markers": [],
                     "sockets": [],
                     "source": {
-                        "spriteIndex": 0
+                        "spriteIndex": 54
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 55
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 56
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 57
                     }
                 }
             ],
             "looping": true,
-            "name": "clip"
+            "mirrored": false,
+            "name": "idle_up"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 18
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 19
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 20
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 21
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": false,
+            "name": "idle_left"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 18
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 19
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 20
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 21
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": true,
+            "name": "idle_right"
         }
     ],
+    "controller": {
+        "bindings": [],
+        "defaultAction": "idle_left"
+    },
     "frameSource": {
         "columns": 6,
         "frameHeight": 48,
