@@ -1,151 +1,22 @@
 #include "player/Player.h"
-
+#include <teya/animation/AnimationIO.h>
+#include <teya/animation/AnimationTransforms.h>
+#include <teya/core/AssetPath.h>
 #include <teya/core/Input.h>
 #include <teya/core/Log.h>
 #include <teya/core/Profile.h>
-
+#include <algorithm>
 #include <cmath>
-
-namespace {
-constexpr int IdleFrameCount = 4;
-constexpr int MovementFrameCount = 6;
-constexpr int AnimationRows = 3;
-constexpr float SpriteFrameWidth = 48.0f;
-constexpr float SpriteFrameHeight = 48.0f;
-constexpr float DrawWidth = 48.0f;
-constexpr float DrawHeight = 48.0f;
-constexpr float ColliderSize = 10.0f;
-constexpr float WalkSpeed = 55.0f;
-constexpr float RunSpeed = 100.0f;
-constexpr int ExpectedSheetWidth =
-    MovementFrameCount * static_cast<int>(SpriteFrameWidth);
-constexpr int ExpectedSheetHeight =
-    AnimationRows * static_cast<int>(SpriteFrameHeight);
-} // namespace
-
-Player::~Player() { shutdown(); }
-
-bool Player::initialize(teya::collision2d::World &world,
-                        teya::collision2d::Vector2 position) {
-    TEYA_PROFILE_ZONE_NAMED("Player::initialize");
-    shutdown();
-    world_ = &world;
-
-    texture_ = LoadTexture("assets/textures/player-sheet.png");
-    if (!IsTextureValid(texture_)) {
-        teya::core::Log::error("Player", "Could not load the player sprite sheet");
-        world_ = nullptr;
-        return false;
-    }
-
-    if (texture_.width != ExpectedSheetWidth ||
-        texture_.height != ExpectedSheetHeight) {
-        teya::core::Log::error(
-            "Player",
-            "Player sprite sheet must be exactly 288x144 pixels: "
-            "6 columns by 3 rows, with 48x48 frames");
-        UnloadTexture(texture_);
-        texture_ = {};
-        world_ = nullptr;
-        return false;
-    }
-    SetTextureFilter(texture_, TEXTURE_FILTER_POINT);
-
-    animator_.setGridAnimation("idle", 0, IdleFrameCount, SpriteFrameWidth,
-                               SpriteFrameHeight, 0.18f);
-    animator_.setGridAnimation("walk", 1, MovementFrameCount, SpriteFrameWidth,
-                               SpriteFrameHeight, 0.11f);
-    animator_.setGridAnimation("run", 2, MovementFrameCount, SpriteFrameWidth,
-                               SpriteFrameHeight, 0.075f);
-
-    collider_ = world_->add(
-        {{position.x - ColliderSize * 0.5f, position.y - ColliderSize * 0.5f,
-          ColliderSize, ColliderSize}, 1});
-    animationState_ = AnimationState::Idle;
-    (void)animator_.play("idle", true);
-    return true;
-}
-
-void Player::shutdown() {
-    TEYA_PROFILE_ZONE_NAMED("Player::shutdown");
-    if (world_ && collider_ != teya::collision2d::InvalidColliderId) {
-        (void)world_->remove(collider_);
-    }
-    collider_ = teya::collision2d::InvalidColliderId;
-    world_ = nullptr;
-
-    if (IsTextureValid(texture_)) {
-        UnloadTexture(texture_);
-    }
-    texture_ = {};
-}
-
-void Player::update(float deltaTime, bool inputEnabled) {
-    TEYA_PROFILE_ZONE_NAMED("Player::update");
-    if (!world_ || collider_ == teya::collision2d::InvalidColliderId) return;
-
-    using teya::core::Action;
-    namespace Input = teya::core::Input;
-
-    teya::collision2d::Vector2 direction{};
-    if (inputEnabled) direction = {
-        static_cast<float>(Input::isDown(Action::MoveRight)) -
-            static_cast<float>(Input::isDown(Action::MoveLeft)),
-        static_cast<float>(Input::isDown(Action::MoveDown)) -
-        static_cast<float>(Input::isDown(Action::MoveUp))};
-
-    const float length = std::sqrt(direction.x * direction.x +
-                                   direction.y * direction.y);
-    const bool moving = length > 0.0f;
-    if (moving) {
-        direction.x /= length;
-        direction.y /= length;
-        if (direction.x < 0.0f) facingLeft_ = true;
-        if (direction.x > 0.0f) facingLeft_ = false;
-    }
-
-    const bool running = moving && inputEnabled && Input::isDown(Action::Run);
-    const float speed = running ? RunSpeed : WalkSpeed;
-    (void)world_->move(
-        collider_, {direction.x * speed * deltaTime,
-                    direction.y * speed * deltaTime});
-
-    play(!moving ? AnimationState::Idle
-                 : (running ? AnimationState::Run : AnimationState::Walk));
-    animator_.update(deltaTime);
-}
-#if TEYA_ENABLE_EDITOR
 #include <sstream>
-std::vector<teya::editor::RuntimeProperty> Player::editorProperties() const { std::vector<teya::editor::RuntimeProperty> p;const auto*c=world_?world_->get(collider_):nullptr;if(c){auto f=[](float v){std::ostringstream s;s<<v;return s.str();};p.push_back({"Position",f(c->bounds.x+c->bounds.width*.5f)+", "+f(c->bounds.y+c->bounds.height*.5f)});p.push_back({"Collider",f(c->bounds.x)+", "+f(c->bounds.y)+", "+f(c->bounds.width)+", "+f(c->bounds.height)});}p.push_back({"Facing",facingLeft_?"Left":"Right"});p.push_back({"Movement",animationState_==AnimationState::Idle?"Idle":animationState_==AnimationState::Walk?"Walk":"Run"});p.push_back({"Animation",animator_.currentAnimationName()});p.push_back({"Animation frame",std::to_string(animator_.currentFrameIndex())});p.push_back({"Texture",std::to_string(texture_.width)+" x "+std::to_string(texture_.height)});return p;}
+namespace { constexpr float ColliderSize=10,WalkSpeed=55,RunSpeed=100; std::string number(float v){std::ostringstream s;s<<v;return s.str();} std::string yes(bool v){return v?"true":"false";} }
+Player::~Player(){shutdown();}
+bool Player::initialize(teya::collision2d::World& world,teya::collision2d::Vector2 position){TEYA_PROFILE_ZONE_NAMED("Player::initialize");shutdown();world_=&world;auto loaded=teya::animation::loadAnimationAsset(teya::core::assets::path(animationAssetPath_));if(!loaded){teya::core::Log::error("Player","Animation asset failed: "+loaded.error);world_=nullptr;return false;}animationAsset_=loaded.asset;texture_=LoadTexture(teya::core::assets::path(animationAsset_->texturePath).string().c_str());if(!IsTextureValid(texture_)){teya::core::Log::error("Player","Could not load animation texture");animationAsset_.reset();world_=nullptr;return false;}auto validation=teya::animation::validateAnimationAsset(*animationAsset_,texture_.width,texture_.height);if(!validation.valid()){teya::core::Log::error("Player","Animation frames exceed the loaded texture or are invalid");UnloadTexture(texture_);texture_={};animationAsset_.reset();world_=nullptr;return false;}SetTextureFilter(texture_,teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));animation_.replaceAsset(animationAsset_);if(!animation_.play("idle")){shutdown();return false;}animation_.consumeEvents();collider_=world_->add({{position.x-ColliderSize*.5f,position.y-ColliderSize*.5f,ColliderSize,ColliderSize},1});return collider_!=teya::collision2d::InvalidColliderId;}
+void Player::shutdown(){TEYA_PROFILE_ZONE_NAMED("Player::shutdown");if(world_&&collider_!=teya::collision2d::InvalidColliderId)(void)world_->remove(collider_);collider_=teya::collision2d::InvalidColliderId;world_=nullptr;if(IsTextureValid(texture_))UnloadTexture(texture_);texture_={};animationAsset_.reset();animation_.replaceAsset({});recentEvents_.clear();slashEffectSeconds_=0;}
+void Player::update(float dt,bool inputEnabled){TEYA_PROFILE_ZONE_NAMED("Player::update");if(!world_||collider_==teya::collision2d::InvalidColliderId)return;using teya::core::Action;namespace Input=teya::core::Input;teya::collision2d::Vector2 d{};if(inputEnabled)d={float(Input::isDown(Action::MoveRight))-float(Input::isDown(Action::MoveLeft)),float(Input::isDown(Action::MoveDown))-float(Input::isDown(Action::MoveUp))};float len=std::sqrt(d.x*d.x+d.y*d.y);bool moving=len>0;if(moving){d.x/=len;d.y/=len;if(d.x<0)facingLeft_=true;if(d.x>0)facingLeft_=false;}bool running=moving&&inputEnabled&&Input::isDown(Action::Run);float speed=running?RunSpeed:WalkSpeed;(void)world_->move(collider_,{d.x*speed*dt,d.y*speed*dt});if(inputEnabled&&Input::isPressed(Action::Confirm))animation_.play("sword_attack",true);bool attacking=animation_.currentClipName()=="sword_attack"&&!animation_.isComplete();if(!attacking)selectMovementClip(!moving?MovementState::Idle:(running?MovementState::Run:MovementState::Walk));animation_.update(dt);handleEvents();slashEffectSeconds_=std::max(0.0f,slashEffectSeconds_-dt);}
+void Player::selectMovementClip(MovementState s){if(movementState_==s&&animation_.currentClipName()!="sword_attack")return;movementState_=s;animation_.play(s==MovementState::Idle?"idle":s==MovementState::Walk?"walk":"run");}
+void Player::handleEvents(){auto triggered=animation_.consumeEvents();for(const auto&e:triggered){if(e.name=="spawn_slash"||e.name=="attack_active")slashEffectSeconds_=.12f;else if(e.name=="attack_started")teya::core::Log::debug("Animation","Attack started");else if(e.name=="attack_finished")teya::core::Log::debug("Animation","Attack finished");else if(e.name=="play_sound")teya::core::Log::debug("Animation","Sound event: "+e.payload);recentEvents_.push_back(e);}if(recentEvents_.size()>8)recentEvents_.erase(recentEvents_.begin(),recentEvents_.begin()+static_cast<std::ptrdiff_t>(recentEvents_.size()-8));}
+void Player::drawAttachments(teya::animation::AttachmentLayer layer,Vector2 topLeft)const{auto*f=animation_.currentFrame();if(!f||!animationAsset_)return;auto source=teya::animation::animationSourceRectangle(*animationAsset_,*f);if(!source)return;for(auto socket:f->sockets){if(socket.layer!=layer||!socket.visible)continue;if(facingLeft_)socket=teya::animation::mirrorSocket(socket,source->width);Vector2 p{topLeft.x+socket.position.x,topLeft.y+socket.position.y};p=teya::animation::applyPositionPolicy(p,animationAsset_->render.roundAttachmentPositions);float radians=socket.rotationDegrees*DEG2RAD;Vector2 tip{p.x+std::cos(radians)*18*socket.scale.x,p.y+std::sin(radians)*18*socket.scale.y};if(animationAsset_->render.roundAttachmentPositions)tip=teya::animation::applyPositionPolicy(tip,true);DrawLineEx(p,tip,3,Color{90,58,32,255});DrawCircleV(tip,2,LIGHTGRAY);}}
+void Player::draw()const{TEYA_PROFILE_ZONE_NAMED("Player::draw");if(!world_||!IsTextureValid(texture_)||!animationAsset_)return;auto*c=world_->get(collider_);auto*f=animation_.currentFrame();if(!c||!f)return;auto source=teya::animation::animationSourceRectangle(*animationAsset_,*f);if(!source)return;float w=source->width,h=source->height;Vector2 topLeft{c->bounds.x+c->bounds.width*.5f-w*.5f,c->bounds.y+c->bounds.height-h};topLeft=teya::animation::applyPositionPolicy(topLeft,animationAsset_->render.roundOwnerPosition);drawAttachments(teya::animation::AttachmentLayer::BehindOwner,topLeft);Rectangle src=*source;if(facingLeft_){src.x+=src.width;src.width=-src.width;}DrawTexturePro(texture_,src,{topLeft.x,topLeft.y,w,h},{0,0},0,WHITE);drawAttachments(teya::animation::AttachmentLayer::InFrontOfOwner,topLeft);if(slashEffectSeconds_>0){Vector2 center{topLeft.x+w*.5f,topLeft.y+h*.5f};DrawCircleLines(int(center.x+(facingLeft_?-18:18)),int(center.y),14,ORANGE);}}
+#if TEYA_ENABLE_EDITOR
+std::vector<teya::editor::RuntimeProperty> Player::editorProperties()const{std::vector<teya::editor::RuntimeProperty>p;auto*c=world_?world_->get(collider_):nullptr;if(c){p.push_back({"Position",number(c->bounds.x+c->bounds.width*.5f)+", "+number(c->bounds.y+c->bounds.height*.5f)});p.push_back({"Collider",number(c->bounds.x)+", "+number(c->bounds.y)+", "+number(c->bounds.width)+", "+number(c->bounds.height)});}p.push_back({"Facing",facingLeft_?"Left":"Right"});p.push_back({"Animation asset",animationAssetPath_});if(!animationAsset_)return p;auto mode=animationAsset_->sourceMode==teya::animation::AnimationFrameSourceMode::SpriteSheetGrid?"SpriteSheetGrid":"TextureAtlas";p.push_back({"Texture path",animationAsset_->texturePath});p.push_back({"Frame source mode",mode});p.push_back({"Render mode",animationAsset_->render.mode==teya::animation::AnimationRenderMode::PixelArt?"PixelArt":"Smooth"});p.push_back({"Texture filter",animationAsset_->render.textureFilter==teya::animation::AnimationTextureFilter::Nearest?"Nearest":"Linear"});p.push_back({"Current clip",std::string(animation_.currentClipName())});p.push_back({"Current frame",std::to_string(animation_.currentFrameIndex())});p.push_back({"Frame elapsed",number(animation_.frameElapsed())});p.push_back({"Clip elapsed",number(animation_.clipElapsed())});p.push_back({"Playback speed",number(animation_.playbackSpeed())});p.push_back({"Playing",yes(animation_.isPlaying())});p.push_back({"Paused",yes(animation_.isPaused())});p.push_back({"Complete",yes(animation_.isComplete())});auto*f=animation_.currentFrame();if(f){auto r=teya::animation::animationSourceRectangle(*animationAsset_,*f);if(r)p.push_back({"Source rectangle",number(r->x)+", "+number(r->y)+", "+number(r->width)+", "+number(r->height)});for(const auto&s:f->sockets)p.push_back({"Socket: "+s.name,number(s.position.x)+", "+number(s.position.y)+" rot "+number(s.rotationDegrees)});for(const auto&h:f->hitboxes)p.push_back({"Hitbox: "+h.name,number(h.localBounds.x)+", "+number(h.localBounds.y)+", "+number(h.localBounds.width)+", "+number(h.localBounds.height)});for(const auto&m:f->markers)p.push_back({"Marker: "+m.name,m.type+" @ "+number(m.position.x)+", "+number(m.position.y)});}for(const auto&e:recentEvents_)p.push_back({"Recent event",e.clipName+"["+std::to_string(e.frameIndex)+"] "+e.name+" "+e.payload});return p;}
 #endif
-
-void Player::draw() const {
-    TEYA_PROFILE_ZONE_NAMED("Player::draw");
-    if (!world_ || !IsTextureValid(texture_)) return;
-
-    const auto *collider = world_->get(collider_);
-    if (!collider) return;
-
-    const Rectangle destination{
-        collider->bounds.x + collider->bounds.width * 0.5f - DrawWidth * 0.5f,
-        collider->bounds.y + collider->bounds.height - DrawHeight,
-        DrawWidth, DrawHeight};
-    animator_.draw(texture_, destination, {}, 0.0f, WHITE, facingLeft_);
-}
-
-void Player::play(AnimationState state) {
-    if (animationState_ == state) return;
-
-    animationState_ = state;
-    switch (state) {
-    case AnimationState::Idle:
-        (void)animator_.play("idle");
-        break;
-    case AnimationState::Walk:
-        (void)animator_.play("walk");
-        break;
-    case AnimationState::Run:
-        (void)animator_.play("run");
-        break;
-    }
-}

@@ -8,6 +8,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added versioned animation assets with grid/atlas frames, pixel and smooth render
+  policies, validation, events, sockets, hitboxes, markers, mirroring, and safe playback.
+- Added asset-driven Player animation, socket-following weapon diagnostics, slash
+  events, and detailed read-only animation Inspector properties.
+
 - Added the opt-in Teya development editor with a dockable Game View, runtime
   hierarchy and inspector, performance metrics, simulation controls, and input gating.
 
@@ -24,6 +29,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
   indexing.
 
 ### Changed
+
+- Replaced hard-coded Player sprite rows and timing with
+  `assets/animations/player.animation.json`.
 
 - Renamed the game resolution settings to `CanvasWidth`, `CanvasHeight`, and
   `InitialWindowScale` for clearer intent.
