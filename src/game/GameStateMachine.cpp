@@ -9,24 +9,35 @@ GameStateMachine::GameStateMachine(const teya::graphics::PixelCanvas &canvas)
 
 bool GameStateMachine::initialize() {
     TEYA_PROFILE_ZONE_NAMED("GameStateMachine::initialize");
+    currentState_ = GameState::MainMenu;
     return world_.initialize();
 }
 
-GameAction GameStateMachine::update(float deltaTime, bool gameplayInputEnabled) {
+bool GameStateMachine::restart() {
+    TEYA_PROFILE_ZONE_NAMED("GameStateMachine::restart");
+    world_.shutdown();
+    currentState_ = GameState::MainMenu;
+    return world_.initialize();
+}
+
+GameAction GameStateMachine::update(float deltaTime, bool gameplayInputEnabled,
+                                    std::optional<Vector2> canvasPointer) {
     TEYA_PROFILE_ZONE_NAMED("GameStateMachine::update");
     switch (currentState_) {
     case GameState::MainMenu:
-        return updateMainMenu();
+        return updateMainMenu(gameplayInputEnabled, canvasPointer);
     case GameState::Playing:
         return updatePlaying(deltaTime, gameplayInputEnabled);
     case GameState::PauseMenu:
-        return updatePauseMenu();
+        return updatePauseMenu(gameplayInputEnabled, canvasPointer);
     }
     return GameAction::None;
 }
 
-GameAction GameStateMachine::updateMainMenu() {
-    switch (mainMenu_.update()) {
+GameAction GameStateMachine::updateMainMenu(bool gameplayInputEnabled,
+                                            std::optional<Vector2> canvasPointer) {
+    if (!gameplayInputEnabled) return GameAction::None;
+    switch (mainMenu_.update(canvasPointer)) {
     case game::ui::MainMenuAction::StartGame:
         currentState_ = GameState::Playing;
         break;
@@ -54,8 +65,10 @@ int GameStateMachine::colliderCount() const{return world_.colliderCount();}
 std::vector<teya::editor::RuntimeProperty> GameStateMachine::editorProperties(teya::editor::RuntimeObjectId id) const { if(id==5)return world_.playerProperties();if(id==4)return {{"Map",world_.mapName()}};if(id==6)return {{"Collider count",std::to_string(world_.colliderCount())}};return {{"Name",id==1?"Game":id==3?"World":stateName()}}; }
 #endif
 
-GameAction GameStateMachine::updatePauseMenu() {
-    switch (pauseMenu_.update()) {
+GameAction GameStateMachine::updatePauseMenu(bool gameplayInputEnabled,
+                                             std::optional<Vector2> canvasPointer) {
+    if (!gameplayInputEnabled) return GameAction::None;
+    switch (pauseMenu_.update(canvasPointer)) {
     case game::ui::PauseMenuAction::Resume:
         currentState_ = GameState::Playing;
         break;

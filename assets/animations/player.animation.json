@@ -215,8 +215,8 @@
                             "layer": "behind_owner",
                             "name": "weapon_hand",
                             "position": {
-                                "x": 22.0,
-                                "y": 28.0
+                                "x": 33.0,
+                                "y": 25.0
                             },
                             "rotationDegrees": -55.0,
                             "scale": {

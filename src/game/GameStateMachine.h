@@ -5,6 +5,7 @@
 #include "world/World.h"
 
 #include <teya/graphics/PixelCanvas.h>
+#include <optional>
 #if TEYA_ENABLE_EDITOR
 #include <teya/editor/EditorHost.h>
 #include <vector>
@@ -17,7 +18,9 @@ class GameStateMachine {
     explicit GameStateMachine(const teya::graphics::PixelCanvas &canvas);
 
     [[nodiscard]] bool initialize();
-    [[nodiscard]] GameAction update(float deltaTime, bool gameplayInputEnabled = true);
+    [[nodiscard]] bool restart();
+    [[nodiscard]] GameAction update(float deltaTime, bool gameplayInputEnabled = true,
+                                    std::optional<Vector2> canvasPointer = std::nullopt);
     void draw() const;
     [[nodiscard]] const char* stateName() const;
     [[nodiscard]] const char* mapName() const;
@@ -30,9 +33,11 @@ class GameStateMachine {
   private:
     enum class GameState { MainMenu, Playing, PauseMenu };
 
-    [[nodiscard]] GameAction updateMainMenu();
+    [[nodiscard]] GameAction updateMainMenu(bool gameplayInputEnabled,
+                                            std::optional<Vector2> canvasPointer);
     [[nodiscard]] GameAction updatePlaying(float deltaTime, bool gameplayInputEnabled);
-    [[nodiscard]] GameAction updatePauseMenu();
+    [[nodiscard]] GameAction updatePauseMenu(bool gameplayInputEnabled,
+                                             std::optional<Vector2> canvasPointer);
 
     game::World world_;
     game::ui::MainMenu mainMenu_;

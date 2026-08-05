@@ -18,6 +18,9 @@ public:
     teya::editor::AnimationSaveResult applyAnimationAssetWithoutSaving(std::uint64_t assetId,const teya::animation::AnimationAsset& asset) override;
     std::vector<std::string> animationEventSuggestions() const override;
     std::vector<std::string> animationMarkerTypeSuggestions() const override;
+    std::string editorLogPath() const override;
+    void flushEditorLog() override;
+    void requestGameRestart(bool pauseAfterRestart) override;
     void requestExit() override;
 private: Game& game_;
 };

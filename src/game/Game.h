@@ -29,6 +29,7 @@ class Game {
     std::vector<teya::editor::RuntimeProperty> editorProperties(teya::editor::RuntimeObjectId id) const;
     teya::editor::EditorFrameMetrics editorMetrics() const;
     Player& editorPlayer() { return gameStates_.editorPlayer(); }
+    void requestGameRestart(bool pauseAfterRestart);
     void requestEditorExit();
 #endif
 
@@ -44,5 +45,6 @@ class Game {
     std::unique_ptr<GameEditorHost> editorHost_;
     std::unique_ptr<teya::editor::Editor> editor_;
     teya::editor::EditorFrameMetrics metrics_;
+    bool restartRequested_ = false;
 #endif
 };

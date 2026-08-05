@@ -1,6 +1,7 @@
 #pragma once
 
 #include <teya/graphics/PixelCanvas.h>
+#include <optional>
 
 namespace game::ui {
 
@@ -10,7 +11,7 @@ class PauseMenu {
   public:
     explicit PauseMenu(const teya::graphics::PixelCanvas &canvas);
 
-    [[nodiscard]] PauseMenuAction update();
+    [[nodiscard]] PauseMenuAction update(std::optional<Vector2> canvasPointer = std::nullopt);
     void draw() const;
 
   private:

@@ -30,14 +30,14 @@ void drawCenteredText(const char *text, int centerX, int y, int fontSize, Color 
 
 PauseMenu::PauseMenu(const teya::graphics::PixelCanvas &canvas) : canvas_(canvas) {}
 
-PauseMenuAction PauseMenu::update() {
+PauseMenuAction PauseMenu::update(std::optional<Vector2> canvasPointer) {
     TEYA_PROFILE_ZONE_NAMED("PauseMenu::update");
     using teya::core::Action;
     using teya::core::PointerButton;
     namespace Input = teya::core::Input;
 
     const auto pointer = Input::pointerPosition();
-    const Vector2 pointerPosition = canvas_.windowToCanvas({pointer.x, pointer.y});
+    const Vector2 pointerPosition = canvasPointer.value_or(canvas_.windowToCanvas({pointer.x, pointer.y}));
     const bool pointerPressed = Input::isPressed(PointerButton::Primary);
 
     if (Input::isPressed(Action::Cancel)) return PauseMenuAction::Resume;

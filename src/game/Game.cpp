@@ -51,13 +51,23 @@ void Game::run() {
 void Game::update(float deltaTime) {
     TEYA_PROFILE_ZONE_NAMED("Game::update");
 #if TEYA_ENABLE_EDITOR
+    if (restartRequested_) {
+        restartRequested_ = false;
+        if (!gameStates_.restart())
+            teya::core::Log::error("Game", "Runtime restart failed");
+        else
+            teya::core::Log::info("Game", "Runtime restarted while the editor remained open");
+        return;
+    }
     const bool inputEnabled = editor_->gameInputEnabled();
+    const auto canvasPointer = editor_->gamePointerCanvasPosition();
     if (!editor_->shouldUpdateGame()) return;
     if (editor_->context().simulationMode() == teya::editor::SimulationMode::Paused) deltaTime = 1.0f / 60.0f;
 #else
     constexpr bool inputEnabled = true;
+    constexpr std::nullopt_t canvasPointer = std::nullopt;
 #endif
-    if (gameStates_.update(deltaTime, inputEnabled) == GameAction::Exit) {
+    if (gameStates_.update(deltaTime, inputEnabled, canvasPointer) == GameAction::Exit) {
         exitRequested_ = true;
     }
 }
@@ -96,4 +106,5 @@ std::vector<teya::editor::RuntimeNode> Game::editorHierarchy() const{return {{1,
 std::vector<teya::editor::RuntimeProperty> Game::editorProperties(teya::editor::RuntimeObjectId id) const{return gameStates_.editorProperties(id);}
 teya::editor::EditorFrameMetrics Game::editorMetrics() const{auto m=metrics_;m.fps=static_cast<float>(GetFPS());m.frameMilliseconds=GetFrameTime()*1000.0f;m.canvasWidth=canvas_.width();m.canvasHeight=canvas_.height();m.imageWidth=canvas_.width();m.imageHeight=canvas_.height();m.currentState=gameStates_.stateName();m.currentMap=gameStates_.mapName();m.colliderCount=gameStates_.colliderCount();return m;}
 void Game::requestEditorExit(){exitRequested_=true;}
+void Game::requestGameRestart(bool){restartRequested_=true;}
 #endif

@@ -4,7 +4,9 @@
 #include "player/Player.h"
 #include <teya/animation/AnimationIO.h>
 #include <teya/core/AssetPath.h>
+#include <teya/core/Log.h>
 #include <teya/core/Profile.h>
+#include <filesystem>
 #include <memory>
 namespace { constexpr std::uint64_t PlayerAnimationId=1; }
 RenderTexture2D GameEditorHost::gameViewTexture() const{return game_.editorTexture();}
@@ -20,5 +22,8 @@ teya::editor::AnimationSaveResult GameEditorHost::saveAndApplyAnimationAsset(std
 teya::editor::AnimationSaveResult GameEditorHost::applyAnimationAssetWithoutSaving(std::uint64_t id,const teya::animation::AnimationAsset&a){TEYA_PROFILE_ZONE_NAMED("AnimationEditorHost::apply");if(id!=PlayerAnimationId)return {false,false,"Unknown animation asset"};auto validation=validateEditableAnimation(a,game_.editorPlayer().animationTexture().width,game_.editorPlayer().animationTexture().height);if(!validation.valid())return {false,false,"Animation validation failed"};std::string error;if(!game_.editorPlayer().applyAnimationAsset(std::make_shared<const teya::animation::AnimationAsset>(a),error))return {false,false,error};return {false,true,{}};}
 std::vector<std::string> GameEditorHost::animationEventSuggestions()const{return {"attack_started","attack_active","spawn_slash","attack_finished","play_sound","footstep"};}
 std::vector<std::string> GameEditorHost::animationMarkerTypeSuggestions()const{return {"effect","sound","footstep","interaction","camera"};}
+std::string GameEditorHost::editorLogPath()const{return std::filesystem::absolute("logs/teya_game.log").string();}
+void GameEditorHost::flushEditorLog(){teya::core::Log::flush();}
+void GameEditorHost::requestGameRestart(bool pauseAfterRestart){game_.requestGameRestart(pauseAfterRestart);}
 void GameEditorHost::requestExit(){game_.requestEditorExit();}
 #endif
