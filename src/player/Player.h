@@ -1,4 +1,6 @@
 #pragma once
+#include "player/AttachmentObjects.h"
+#include <cstdint>
 #include <memory>
 #include <raylib.h>
 #include <string>
@@ -18,6 +20,11 @@ class Player {
     void shutdown();
     void update(float deltaTime, bool inputEnabled = true);
     void draw() const;
+    [[nodiscard]] const std::vector<AttachmentObject> &attachmentObjects() const {
+        return attachmentObjects_;
+    }
+    bool replaceAttachmentObjects(std::vector<AttachmentObject> objects, std::string &error);
+    bool equipAttachment(std::uint64_t objectId, std::string &error);
 #if TEYA_ENABLE_EDITOR
     std::vector<teya::editor::RuntimeProperty> editorProperties() const;
     [[nodiscard]] const std::shared_ptr<const teya::animation::AnimationAsset> &
@@ -31,11 +38,15 @@ class Player {
 #endif
   private:
     void handleEvents();
+    bool loadAttachmentObjects(std::string &error);
     [[nodiscard]] bool currentClipMirrored() const;
     void drawAttachments(teya::animation::AttachmentLayer layer, Vector2 ownerTopLeft) const;
     teya::collision2d::World *world_ = nullptr;
     teya::collision2d::ColliderId collider_ = teya::collision2d::InvalidColliderId;
     Texture2D texture_{};
+    Texture2D attachmentTexture_{};
+    std::vector<AttachmentObject> attachmentObjects_;
+    std::uint64_t equippedAttachmentId_ = 0;
     std::shared_ptr<const teya::animation::AnimationAsset> animationAsset_;
     teya::animation::AnimationController animation_;
     bool facingLeft_ = false;

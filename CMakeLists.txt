@@ -28,6 +28,8 @@ add_executable(teya_game
     src/game/GameEditorHost.h
     src/player/Player.cpp
     src/player/Player.h
+    src/player/AttachmentObjects.cpp
+    src/player/AttachmentObjects.h
     src/ui/MainMenu.cpp
     src/ui/MainMenu.h
     src/ui/PauseMenu.cpp

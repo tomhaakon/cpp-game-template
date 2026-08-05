@@ -338,91 +338,19 @@
         {
             "frames": [
                 {
-                    "durationSeconds": 0.07500000298023224,
+                    "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 6
-                    }
-                },
-                {
-                    "durationSeconds": 0.07500000298023224,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 7
-                    }
-                },
-                {
-                    "durationSeconds": 0.07500000298023224,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 8
-                    }
-                },
-                {
-                    "durationSeconds": 0.07500000298023224,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 9
-                    }
-                },
-                {
-                    "durationSeconds": 0.07500000298023224,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 10
-                    }
-                },
-                {
-                    "durationSeconds": 0.07500000298023224,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [],
-                    "source": {
-                        "spriteIndex": 11
-                    }
-                }
-            ],
-            "looping": true,
-            "mirrored": false,
-            "name": "run"
-        },
-        {
-            "frames": [
-                {
-                    "durationSeconds": 0.07999999821186066,
-                    "events": [
-                        {
-                            "name": "attack_started",
-                            "payload": ""
-                        }
-                    ],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [
                         {
                             "layer": "behind_owner",
-                            "name": "weapon_hand",
+                            "name": "weapon",
                             "position": {
-                                "x": 33.0,
-                                "y": 25.0
+                                "x": 16.0,
+                                "y": 23.0
                             },
-                            "rotationDegrees": -55.0,
+                            "rotationDegrees": -2.5,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -431,23 +359,73 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 12
+                        "spriteIndex": 78
                     }
                 },
                 {
-                    "durationSeconds": 0.07000000029802322,
+                    "durationSeconds": 0.10000000149011612,
                     "events": [],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [
                         {
                             "layer": "behind_owner",
-                            "name": "weapon_hand",
+                            "name": "weapon",
+                            "position": {
+                                "x": 15.0,
+                                "y": 20.0
+                            },
+                            "rotationDegrees": 20.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 79
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 19.0,
+                                "y": 32.0
+                            },
+                            "rotationDegrees": -100.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 80
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
                             "position": {
                                 "x": 22.0,
-                                "y": 28.0
+                                "y": 33.0
                             },
-                            "rotationDegrees": -55.0,
+                            "rotationDegrees": -150.0,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -456,174 +434,334 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 13
-                    }
-                },
-                {
-                    "durationSeconds": 0.05999999865889549,
-                    "events": [
-                        {
-                            "name": "attack_active",
-                            "payload": "sword"
-                        },
-                        {
-                            "name": "spawn_slash",
-                            "payload": "basic_slash"
-                        }
-                    ],
-                    "hitboxes": [
-                        {
-                            "active": true,
-                            "bounds": {
-                                "height": 24.0,
-                                "width": 20.0,
-                                "x": 26.0,
-                                "y": 8.0
-                            },
-                            "name": "sword"
-                        }
-                    ],
-                    "markers": [
-                        {
-                            "name": "slash_origin",
-                            "payload": "basic_slash",
-                            "position": {
-                                "x": 42.0,
-                                "y": 16.0
-                            },
-                            "rotationDegrees": 0.0,
-                            "type": "effect"
-                        }
-                    ],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon_hand",
-                            "position": {
-                                "x": 22.0,
-                                "y": 28.0
-                            },
-                            "rotationDegrees": -55.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        },
-                        {
-                            "layer": "in_front",
-                            "name": "weapon_tip",
-                            "position": {
-                                "x": 46.0,
-                                "y": 24.0
-                            },
-                            "rotationDegrees": 5.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": false
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 14
-                    }
-                },
-                {
-                    "durationSeconds": 0.07000000029802322,
-                    "events": [],
-                    "hitboxes": [
-                        {
-                            "active": true,
-                            "bounds": {
-                                "height": 20.0,
-                                "width": 22.0,
-                                "x": 24.0,
-                                "y": 18.0
-                            },
-                            "name": "sword"
-                        }
-                    ],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon_hand",
-                            "position": {
-                                "x": 22.0,
-                                "y": 28.0
-                            },
-                            "rotationDegrees": -55.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 15
-                    }
-                },
-                {
-                    "durationSeconds": 0.09000000357627869,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon_hand",
-                            "position": {
-                                "x": 22.0,
-                                "y": 28.0
-                            },
-                            "rotationDegrees": -55.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 16
-                    }
-                },
-                {
-                    "durationSeconds": 0.11999999731779099,
-                    "events": [
-                        {
-                            "name": "attack_finished",
-                            "payload": ""
-                        }
-                    ],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon_hand",
-                            "position": {
-                                "x": 22.0,
-                                "y": 28.0
-                            },
-                            "rotationDegrees": -55.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 17
+                        "spriteIndex": 81
                     }
                 }
             ],
             "looping": false,
             "mirrored": false,
-            "name": "sword_attack"
+            "name": "attack_left"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 16.0,
+                                "y": 23.0
+                            },
+                            "rotationDegrees": -25.100000381469727,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 78
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 19.0,
+                                "y": 18.0
+                            },
+                            "rotationDegrees": -7.5,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 79
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 16.0,
+                                "y": 32.0
+                            },
+                            "rotationDegrees": -131.6999969482422,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 80
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 25.0,
+                                "y": 32.0
+                            },
+                            "rotationDegrees": -165.60000610351563,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 81
+                    }
+                }
+            ],
+            "looping": false,
+            "mirrored": true,
+            "name": "attack_right"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 16.0,
+                                "y": 23.0
+                            },
+                            "rotationDegrees": -2.5,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 78
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 15.0,
+                                "y": 20.0
+                            },
+                            "rotationDegrees": 20.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 79
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 19.0,
+                                "y": 32.0
+                            },
+                            "rotationDegrees": -100.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 80
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 22.0,
+                                "y": 33.0
+                            },
+                            "rotationDegrees": -150.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 81
+                    }
+                }
+            ],
+            "looping": false,
+            "mirrored": false,
+            "name": "attack_up"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 16.0,
+                                "y": 23.0
+                            },
+                            "rotationDegrees": -2.5,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 78
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 15.0,
+                                "y": 20.0
+                            },
+                            "rotationDegrees": 20.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 79
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 19.0,
+                                "y": 32.0
+                            },
+                            "rotationDegrees": -100.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 80
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 22.0,
+                                "y": 33.0
+                            },
+                            "rotationDegrees": -150.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 81
+                    }
+                }
+            ],
+            "looping": false,
+            "mirrored": false,
+            "name": "attack_down"
         },
         {
             "frames": [
@@ -769,7 +907,7 @@
     ],
     "controller": {
         "bindings": [],
-        "defaultAction": "idle_left"
+        "defaultAction": "attack_left"
     },
     "frameSource": {
         "columns": 6,

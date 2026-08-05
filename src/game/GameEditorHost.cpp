@@ -72,6 +72,9 @@ GameEditorHost::~GameEditorHost() {
     for (auto &entry : previewTextures_)
         if (IsTextureValid(entry.second))
             UnloadTexture(entry.second);
+    for (auto &entry : attachmentTextures_)
+        if (IsTextureValid(entry.second))
+            UnloadTexture(entry.second);
 }
 RenderTexture2D GameEditorHost::gameViewTexture() const { return game_.editorTexture(); }
 int GameEditorHost::gameCanvasWidth() const { return game_.editorCanvasWidth(); }
@@ -272,6 +275,74 @@ GameEditorHost::applyAnimationAssetWithoutSaving(std::uint64_t id,
             std::make_shared<const teya::animation::AnimationAsset>(a), error))
         return {false, false, error};
     return {false, true, {}};
+}
+std::vector<teya::editor::AttachmentPreviewInfo>
+GameEditorHost::attachmentPreviews(std::uint64_t) const {
+    std::vector<teya::editor::AttachmentPreviewInfo> result;
+    for (const auto &object : game_.editorPlayer().attachmentObjects()) {
+        auto texture = attachmentTextures_.find(object.id);
+        auto cachedPath = attachmentTexturePaths_.find(object.id);
+        if (texture != attachmentTextures_.end() &&
+            (cachedPath == attachmentTexturePaths_.end() || cachedPath->second != object.texturePath)) {
+            if (IsTextureValid(texture->second))
+                UnloadTexture(texture->second);
+            attachmentTextures_.erase(texture);
+            texture = attachmentTextures_.end();
+        }
+        if (texture == attachmentTextures_.end()) {
+            auto loaded = LoadTexture(teya::core::assets::path(object.texturePath).string().c_str());
+            texture = attachmentTextures_.emplace(object.id, loaded).first;
+            attachmentTexturePaths_[object.id] = object.texturePath;
+        }
+        result.push_back({object.id,
+                          object.name,
+                          object.socketName,
+                          object.texturePath,
+                          texture->second,
+                          object.pivot,
+                          object.positionOffset,
+                          object.rotationOffsetDegrees,
+                          object.scale,
+                          object.layer,
+                          object.visible,
+                          false});
+    }
+    return result;
+}
+teya::editor::AttachmentObjectSaveResult GameEditorHost::saveAttachmentObjects(
+    std::uint64_t,
+    const std::vector<teya::editor::AttachmentPreviewInfo> &editorObjects) {
+    std::vector<AttachmentObject> objects;
+    objects.reserve(editorObjects.size());
+    for (const auto &entry : editorObjects) {
+        const auto texturePath = teya::core::assets::path(entry.texturePath);
+        if (!std::filesystem::is_regular_file(texturePath))
+            return {false, "Attachment texture does not exist: " + entry.texturePath};
+        objects.push_back({entry.id,
+                           entry.name,
+                           entry.texturePath,
+                           entry.socketName,
+                           entry.pivot,
+                           entry.positionOffset,
+                           entry.rotationOffsetDegrees,
+                           entry.scale,
+                           entry.layer,
+                           entry.visible});
+    }
+    if (objects.empty())
+        return {false, "Keep at least one attachment object"};
+    std::string error;
+    const auto path = teya::core::assets::path("attachments/player.attachments.json");
+    if (!::saveAttachmentObjects(path, objects, error))
+        return {false, error};
+    if (!game_.editorPlayer().replaceAttachmentObjects(std::move(objects), error))
+        return {false, "Saved, but live application failed: " + error};
+    for (auto &entry : attachmentTextures_)
+        if (IsTextureValid(entry.second))
+            UnloadTexture(entry.second);
+    attachmentTextures_.clear();
+    attachmentTexturePaths_.clear();
+    return {true, {}};
 }
 std::vector<std::string> GameEditorHost::animationEventSuggestions() const {
     return {"attack_started",  "attack_active", "spawn_slash",

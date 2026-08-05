@@ -1,0 +1,26 @@
+{
+    "schemaVersion": 1,
+    "objects": [
+        {
+            "id": 1,
+            "name": "Wooden Sword",
+            "texture": "textures/wooden-sword.png",
+            "socket": "weapon",
+            "pivot": {
+                "x": 5.0,
+                "y": 27.0
+            },
+            "positionOffset": {
+                "x": 0.0,
+                "y": 0.0
+            },
+            "rotationOffsetDegrees": 20.5,
+            "scale": {
+                "x": 1.0,
+                "y": 1.0
+            },
+            "layer": "in_front",
+            "visible": true
+        }
+    ]
+}

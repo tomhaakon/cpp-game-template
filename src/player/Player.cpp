@@ -45,8 +45,12 @@ playerAnimationConfig(const teya::animation::AnimationAsset &asset) {
         bind("idle", entry.direction, "idle_" + std::string(entry.suffix));
         bind("walk", entry.direction, "walk_" + std::string(entry.suffix));
         bind("run", entry.direction, "run_" + std::string(entry.suffix));
-        bind("attack", entry.direction, "sword_attack_" + std::string(entry.suffix),
-             AnimationActionMode::OneShot, 10);
+        const std::string directionalAttack = "attack_" + std::string(entry.suffix);
+        if (asset.findClip(directionalAttack))
+            bind("attack", entry.direction, directionalAttack, AnimationActionMode::OneShot, 10);
+        else
+            bind("attack", entry.direction, "sword_attack_" + std::string(entry.suffix),
+                 AnimationActionMode::OneShot, 10);
     }
     return config;
 }
@@ -84,6 +88,9 @@ bool Player::initialize(teya::collision2d::World &world, teya::collision2d::Vect
     }
     SetTextureFilter(texture_,
                      teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));
+    std::string attachmentError;
+    if (!loadAttachmentObjects(attachmentError))
+        teya::core::Log::warning("Player", attachmentError);
     animation_.replaceAsset(animationAsset_);
     auto animationConfig = playerAnimationConfig(*animationAsset_);
     std::string controllerError;
@@ -106,7 +113,12 @@ void Player::shutdown() {
     world_ = nullptr;
     if (IsTextureValid(texture_))
         UnloadTexture(texture_);
+    if (IsTextureValid(attachmentTexture_))
+        UnloadTexture(attachmentTexture_);
     texture_ = {};
+    attachmentTexture_ = {};
+    attachmentObjects_.clear();
+    equippedAttachmentId_ = 0;
     animationAsset_.reset();
     animation_.replaceAsset({});
     recentEvents_.clear();
@@ -142,7 +154,7 @@ void Player::update(float dt, bool inputEnabled) {
     bool running = moving && inputEnabled && Input::isDown(Action::Run);
     float speed = running ? RunSpeed : WalkSpeed;
     (void)world_->move(collider_, {d.x * speed * dt, d.y * speed * dt});
-    if (inputEnabled && Input::isPressed(Action::Confirm))
+    if (inputEnabled && Input::isPressed(Action::Attack))
         animation_.trigger("attack", true);
     animation_.setAction(!moving ? "idle" : running ? "run" : "walk");
     animation_.update(dt);
@@ -180,9 +192,45 @@ void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 top
     auto source = teya::animation::animationSourceRectangle(*animationAsset_, *f);
     if (!source)
         return;
+    const auto objectIt =
+        std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(), [&](const auto &object) {
+            return object.id == equippedAttachmentId_;
+        });
     for (auto socket : f->sockets) {
-        if (socket.layer != layer || !socket.visible)
+        const bool usesObject = objectIt != attachmentObjects_.end() && objectIt->visible &&
+                                socket.name == objectIt->socketName &&
+                                IsTextureValid(attachmentTexture_);
+        const auto effectiveLayer = usesObject ? objectIt->layer : socket.layer;
+        if (effectiveLayer != layer || !socket.visible)
             continue;
+        if (usesObject) {
+            const bool mirrored = currentClipMirrored();
+            if (mirrored)
+                socket = teya::animation::mirrorSocket(socket, source->width);
+            const auto &object = *objectIt;
+            Vector2 position{topLeft.x + socket.position.x +
+                                 (mirrored ? -object.positionOffset.x : object.positionOffset.x),
+                             topLeft.y + socket.position.y + object.positionOffset.y};
+            position = teya::animation::applyPositionPolicy(
+                position, animationAsset_->render.roundAttachmentPositions);
+            const float scaleX = socket.scale.x * object.scale.x;
+            const float scaleY = socket.scale.y * object.scale.y;
+            Rectangle sourceRect{0, 0, static_cast<float>(attachmentTexture_.width),
+                                 static_cast<float>(attachmentTexture_.height)};
+            if (mirrored)
+                sourceRect.width = -sourceRect.width;
+            Rectangle destination{position.x, position.y,
+                                  attachmentTexture_.width * scaleX,
+                                  attachmentTexture_.height * scaleY};
+            Vector2 pivot{(mirrored ? attachmentTexture_.width - object.pivot.x : object.pivot.x) *
+                              scaleX,
+                          object.pivot.y * scaleY};
+            const float rotation = socket.rotationDegrees +
+                                   (mirrored ? -object.rotationOffsetDegrees
+                                             : object.rotationOffsetDegrees);
+            DrawTexturePro(attachmentTexture_, sourceRect, destination, pivot, rotation, WHITE);
+            continue;
+        }
         if (currentClipMirrored())
             socket = teya::animation::mirrorSocket(socket, source->width);
         Vector2 p{topLeft.x + socket.position.x, topLeft.y + socket.position.y};
@@ -196,6 +244,69 @@ void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 top
         DrawLineEx(p, tip, 3, Color{90, 58, 32, 255});
         DrawCircleV(tip, 2, LIGHTGRAY);
     }
+}
+
+bool Player::loadAttachmentObjects(std::string &error) {
+    std::vector<AttachmentObject> objects;
+    if (!::loadAttachmentObjects(teya::core::assets::path("attachments/player.attachments.json"),
+                                 objects, error))
+        return false;
+    return replaceAttachmentObjects(std::move(objects), error);
+}
+
+bool Player::replaceAttachmentObjects(std::vector<AttachmentObject> objects, std::string &error) {
+    if (objects.empty()) {
+        error = "Attachment object library contains no objects";
+        return false;
+    }
+    const std::uint64_t desired =
+        std::any_of(objects.begin(), objects.end(), [&](const auto &object) {
+            return object.id == equippedAttachmentId_;
+        })
+            ? equippedAttachmentId_
+            : objects.front().id;
+    const auto selected = std::find_if(objects.begin(), objects.end(),
+                                       [&](const auto &object) { return object.id == desired; });
+    Texture2D replacement =
+        LoadTexture(teya::core::assets::path(selected->texturePath).string().c_str());
+    if (!IsTextureValid(replacement)) {
+        error = "Could not load attachment texture: " + selected->texturePath;
+        return false;
+    }
+    if (animationAsset_)
+        SetTextureFilter(replacement,
+                         teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));
+    if (IsTextureValid(attachmentTexture_))
+        UnloadTexture(attachmentTexture_);
+    attachmentTexture_ = replacement;
+    attachmentObjects_ = std::move(objects);
+    equippedAttachmentId_ = desired;
+    return true;
+}
+
+bool Player::equipAttachment(std::uint64_t objectId, std::string &error) {
+    if (objectId == equippedAttachmentId_)
+        return true;
+    auto found = std::find_if(attachmentObjects_.begin(), attachmentObjects_.end(),
+                              [&](const auto &object) { return object.id == objectId; });
+    if (found == attachmentObjects_.end()) {
+        error = "Unknown attachment object";
+        return false;
+    }
+    Texture2D replacement =
+        LoadTexture(teya::core::assets::path(found->texturePath).string().c_str());
+    if (!IsTextureValid(replacement)) {
+        error = "Could not load attachment texture: " + found->texturePath;
+        return false;
+    }
+    if (animationAsset_)
+        SetTextureFilter(replacement,
+                         teya::animation::raylibTextureFilter(animationAsset_->render.textureFilter));
+    if (IsTextureValid(attachmentTexture_))
+        UnloadTexture(attachmentTexture_);
+    attachmentTexture_ = replacement;
+    equippedAttachmentId_ = objectId;
+    return true;
 }
 void Player::draw() const {
     TEYA_PROFILE_ZONE_NAMED("Player::draw");
@@ -262,6 +373,9 @@ bool Player::applyAnimationAsset(std::shared_ptr<const teya::animation::Animatio
     (void)replacementController.setAction(animation_.baseAction());
     SetTextureFilter(replacement,
                      teya::animation::raylibTextureFilter(asset->render.textureFilter));
+    if (IsTextureValid(attachmentTexture_))
+        SetTextureFilter(attachmentTexture_,
+                         teya::animation::raylibTextureFilter(asset->render.textureFilter));
     auto oldTexture = texture_;
     animationAsset_ = std::move(asset);
     texture_ = replacement;

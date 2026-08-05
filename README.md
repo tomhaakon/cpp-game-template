@@ -163,6 +163,10 @@ behavior are not suitable.
 
 Game code queries logical actions instead of physical keyboard keys. WASD and the arrow keys share the same directional actions, so they can drive menus or gameplay without duplicated checks.
 
+Gameplay attack uses the logical `Action::Attack`: press **E** on keyboard or the
+south/**A** face button on a gamepad. The Player resolves it through the last
+facing direction to `attack_left`, `attack_right`, `attack_up`, or `attack_down`.
+
 - `teya::core::Input::isDown(action)` remains true while any bound key is held.
 - `teya::core::Input::isPressed(action)` is true only on the frame a bound key is pressed.
 - `teya::core::Input::isReleased(action)` is true only on the frame a bound key is released.
@@ -229,6 +233,14 @@ direction `Down`, and clip `walk_down`. Expand a binding to change its action,
 direction, clip, looping/one-shot mode, or interruption priority. Save validates
 the mapping and applies it to the running Player; older assets without mappings
 continue to use the template's fallback conventions.
+
+The Animation Editor toolbar also provides **Attachment Objects...**. The Player
+host saves these definitions in `assets/attachments/player.attachments.json`.
+Choose a texture and `weapon_hand`, then click the object preview at the point on
+the handle that should meet the socket. **Save Objects** validates and applies the
+library to the running Player. Add a `weapon_hand` socket to every animation frame
+where the equipped item should be visible; a frame without that socket draws no
+item. Gameplay can switch reusable objects with `Player::equipAttachment(id)`.
 
 ## Troubleshooting
 

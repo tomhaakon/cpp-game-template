@@ -34,6 +34,12 @@ class GameEditorHost final : public teya::editor::EditorHost {
     teya::editor::AnimationSaveResult
     applyAnimationAssetWithoutSaving(std::uint64_t assetId,
                                      const teya::animation::AnimationAsset &asset) override;
+    std::vector<teya::editor::AttachmentPreviewInfo>
+    attachmentPreviews(std::uint64_t assetId) const override;
+    teya::editor::AttachmentObjectSaveResult
+    saveAttachmentObjects(
+        std::uint64_t assetId,
+        const std::vector<teya::editor::AttachmentPreviewInfo> &objects) override;
     std::vector<std::string> animationEventSuggestions() const override;
     std::vector<std::string> animationMarkerTypeSuggestions() const override;
     std::string editorLogPath() const override;
@@ -45,5 +51,7 @@ class GameEditorHost final : public teya::editor::EditorHost {
     Game &game_;
     std::unordered_map<std::uint64_t, Texture2D> previewTextures_;
     std::unordered_map<std::uint64_t, std::string> previewTexturePaths_;
+    mutable std::unordered_map<std::uint64_t, Texture2D> attachmentTextures_;
+    mutable std::unordered_map<std::uint64_t, std::string> attachmentTexturePaths_;
 };
 #endif
