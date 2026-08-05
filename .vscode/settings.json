@@ -3,6 +3,14 @@
     "cmake.useVsDeveloperEnvironment": "never",
     "cmake.configureOnOpen": true,
     "cmake.defaultConfigurePreset": "debug",
+    "git.autoRepositoryDetection": true,
+    "git.detectSubmodules": true,
+    "git.detectSubmodulesLimit": 16,
+    "git.ignoredRepositories": [
+        "E:/Dokumenter/github/teya-game-template/external/teya-core/external/raylib",
+        "E:/Dokumenter/github/teya-game-template/external/teya-core/external/json",
+        "E:/Dokumenter/github/teya-game-template/external/teya-2d/external/teya-tiled"
+    ],
     "C_Cpp.default.configurationProvider": "ms-vscode.cmake-tools",
     "[cpp]": {
         "editor.defaultFormatter": "ms-vscode.cpptools",

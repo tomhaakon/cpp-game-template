@@ -25,7 +25,15 @@ Game::Game() : gameStates_(canvas_) {
 
 void Game::run() {
     TEYA_PROFILE_THREAD("Main");
-    while (!exitRequested_ && !WindowShouldClose()) {
+    while (true) {
+        if (exitRequested_) {
+            teya::core::Log::info("Game", "Closing after an editor exit request");
+            break;
+        }
+        if (WindowShouldClose()) {
+            teya::core::Log::info("Game", "Closing after an operating-system window request");
+            break;
+        }
         TEYA_PROFILE_ZONE_NAMED("Game frame");
         const float deltaTime = GetFrameTime();
         TEYA_PROFILE_PLOT("Frame time (ms)", deltaTime * 1000.0f);

@@ -1,39 +1,454 @@
 {
-    "schemaVersion": 1,
-    "texture": "textures/player-sheet.png",
-    "frameSource": { "mode": "sprite_sheet_grid", "frameWidth": 48, "frameHeight": 48, "columns": 6 },
-    "render": { "mode": "pixel_art", "textureFilter": "nearest", "roundOwnerPosition": true, "roundAttachmentPositions": true },
-    "authoring": { "snapPositions": true, "positionSnap": 1.0, "snapRotation": false, "rotationSnapDegrees": 1.0, "snapScale": false, "scaleSnap": 0.01, "preferIntegerPreviewScale": true, "showPixelGridByDefault": true },
+    "authoring": {
+        "positionSnap": 1.0,
+        "preferIntegerPreviewScale": false,
+        "rotationSnapDegrees": 1.0,
+        "scaleSnap": 0.009999999776482582,
+        "showPixelGridByDefault": true,
+        "snapPositions": true,
+        "snapRotation": false,
+        "snapScale": false
+    },
     "clips": [
-        { "name": "idle", "looping": true, "frames": [
-            { "source":{"spriteIndex":0}, "durationSeconds":0.18, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":1}, "durationSeconds":0.18, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":2}, "durationSeconds":0.18, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":3}, "durationSeconds":0.18, "sockets":[], "events":[], "hitboxes":[], "markers":[] }
-        ] },
-        { "name": "walk", "looping": true, "frames": [
-            { "source":{"spriteIndex":6}, "durationSeconds":0.11, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":7}, "durationSeconds":0.11, "sockets":[], "events":[{"name":"play_sound","payload":"footstep"}], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":8}, "durationSeconds":0.11, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":9}, "durationSeconds":0.11, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":10}, "durationSeconds":0.11, "sockets":[], "events":[{"name":"play_sound","payload":"footstep"}], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":11}, "durationSeconds":0.11, "sockets":[], "events":[], "hitboxes":[], "markers":[] }
-        ] },
-        { "name": "run", "looping": true, "frames": [
-            { "source":{"spriteIndex":6}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":7}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":8}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":9}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":10}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":11}, "durationSeconds":0.075, "sockets":[], "events":[], "hitboxes":[], "markers":[] }
-        ] },
-        { "name": "sword_attack", "looping": false, "frames": [
-            { "source":{"spriteIndex":12}, "durationSeconds":0.08, "sockets":[{"name":"weapon_hand","position":{"x":22.0,"y":28.0},"rotationDegrees":-55.0,"scale":{"x":1.0,"y":1.0},"visible":true,"layer":"behind_owner"}], "events":[{"name":"attack_started","payload":""}], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":13}, "durationSeconds":0.07, "sockets":[{"name":"weapon_hand","position":{"x":26.0,"y":24.0},"rotationDegrees":-25.0,"scale":{"x":1.0,"y":1.0},"visible":true,"layer":"behind_owner"}], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":14}, "durationSeconds":0.06, "sockets":[{"name":"weapon_hand","position":{"x":29.0,"y":23.0},"rotationDegrees":5.0,"scale":{"x":1.0,"y":1.0},"visible":true,"layer":"in_front"},{"name":"weapon_tip","position":{"x":46.0,"y":24.0},"rotationDegrees":5.0,"scale":{"x":1.0,"y":1.0},"visible":false,"layer":"in_front"}], "events":[{"name":"attack_active","payload":"sword"},{"name":"spawn_slash","payload":"basic_slash"}], "hitboxes":[{"name":"sword","bounds":{"x":26.0,"y":8.0,"width":20.0,"height":24.0},"active":true}], "markers":[{"name":"slash_origin","type":"effect","position":{"x":42.0,"y":16.0},"rotationDegrees":0.0,"payload":"basic_slash"}] },
-            { "source":{"spriteIndex":15}, "durationSeconds":0.07, "sockets":[{"name":"weapon_hand","position":{"x":28.0,"y":27.0},"rotationDegrees":35.0,"scale":{"x":1.0,"y":1.0},"visible":true,"layer":"in_front"}], "events":[], "hitboxes":[{"name":"sword","bounds":{"x":24.0,"y":18.0,"width":22.0,"height":20.0},"active":true}], "markers":[] },
-            { "source":{"spriteIndex":16}, "durationSeconds":0.09, "sockets":[{"name":"weapon_hand","position":{"x":24.0,"y":30.0},"rotationDegrees":65.0,"scale":{"x":1.0,"y":1.0},"visible":true,"layer":"in_front"}], "events":[], "hitboxes":[], "markers":[] },
-            { "source":{"spriteIndex":17}, "durationSeconds":0.12, "sockets":[], "events":[{"name":"attack_finished","payload":""}], "hitboxes":[], "markers":[] }
-        ] }
-    ]
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.18000000715255737,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 0
+                    }
+                },
+                {
+                    "durationSeconds": 0.18000000715255737,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 1
+                    }
+                },
+                {
+                    "durationSeconds": 0.18000000715255737,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 2
+                    }
+                },
+                {
+                    "durationSeconds": 0.18000000715255737,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 3
+                    }
+                }
+            ],
+            "looping": true,
+            "name": "idle"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 6
+                    }
+                },
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [
+                        {
+                            "name": "play_sound",
+                            "payload": "footstep"
+                        }
+                    ],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 7
+                    }
+                },
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 8
+                    }
+                },
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 9
+                    }
+                },
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [
+                        {
+                            "name": "play_sound",
+                            "payload": "footstep"
+                        }
+                    ],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 10
+                    }
+                },
+                {
+                    "durationSeconds": 0.10999999940395355,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 11
+                    }
+                }
+            ],
+            "looping": true,
+            "name": "walk"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 6
+                    }
+                },
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 7
+                    }
+                },
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 8
+                    }
+                },
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 9
+                    }
+                },
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 10
+                    }
+                },
+                {
+                    "durationSeconds": 0.07500000298023224,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 11
+                    }
+                }
+            ],
+            "looping": true,
+            "name": "run"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.07999999821186066,
+                    "events": [
+                        {
+                            "name": "attack_started",
+                            "payload": ""
+                        }
+                    ],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 12
+                    }
+                },
+                {
+                    "durationSeconds": 0.07000000029802322,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 13
+                    }
+                },
+                {
+                    "durationSeconds": 0.05999999865889549,
+                    "events": [
+                        {
+                            "name": "attack_active",
+                            "payload": "sword"
+                        },
+                        {
+                            "name": "spawn_slash",
+                            "payload": "basic_slash"
+                        }
+                    ],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 24.0,
+                                "width": 20.0,
+                                "x": 26.0,
+                                "y": 8.0
+                            },
+                            "name": "sword"
+                        }
+                    ],
+                    "markers": [
+                        {
+                            "name": "slash_origin",
+                            "payload": "basic_slash",
+                            "position": {
+                                "x": 42.0,
+                                "y": 16.0
+                            },
+                            "rotationDegrees": 0.0,
+                            "type": "effect"
+                        }
+                    ],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        },
+                        {
+                            "layer": "in_front",
+                            "name": "weapon_tip",
+                            "position": {
+                                "x": 46.0,
+                                "y": 24.0
+                            },
+                            "rotationDegrees": 5.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": false
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 14
+                    }
+                },
+                {
+                    "durationSeconds": 0.07000000029802322,
+                    "events": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 20.0,
+                                "width": 22.0,
+                                "x": 24.0,
+                                "y": 18.0
+                            },
+                            "name": "sword"
+                        }
+                    ],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 15
+                    }
+                },
+                {
+                    "durationSeconds": 0.09000000357627869,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 16
+                    }
+                },
+                {
+                    "durationSeconds": 0.11999999731779099,
+                    "events": [
+                        {
+                            "name": "attack_finished",
+                            "payload": ""
+                        }
+                    ],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon_hand",
+                            "position": {
+                                "x": 22.0,
+                                "y": 28.0
+                            },
+                            "rotationDegrees": -55.0,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 17
+                    }
+                }
+            ],
+            "looping": false,
+            "name": "sword_attack"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 0
+                    }
+                }
+            ],
+            "looping": true,
+            "name": "clip"
+        }
+    ],
+    "frameSource": {
+        "columns": 6,
+        "frameHeight": 48,
+        "frameWidth": 48,
+        "mode": "sprite_sheet_grid"
+    },
+    "render": {
+        "mode": "pixel_art",
+        "roundAttachmentPositions": true,
+        "roundOwnerPosition": true,
+        "textureFilter": "nearest"
+    },
+    "schemaVersion": 1,
+    "texture": "textures/player-sheet.png"
 }
