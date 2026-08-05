@@ -7,6 +7,13 @@
     },
     "configurePresets": [
         {
+            "name": "editor",
+            "displayName": "Editor Debug",
+            "inherits": "debug",
+            "binaryDir": "${sourceDir}/build/editor",
+            "cacheVariables": { "TEYA_ENABLE_EDITOR": "ON", "TEYA_GAME_EDITOR_BUILD_TESTS": "ON" }
+        },
+        {
             "name": "debug",
             "displayName": "Debug",
             "generator": "Ninja",
@@ -26,6 +33,13 @@
                 "CMAKE_BUILD_TYPE": "Debug",
                 "CMAKE_EXPORT_COMPILE_COMMANDS": "ON"
             }
+        },
+        {
+            "name": "windows-editor",
+            "displayName": "Windows Editor (Visual Studio)",
+            "inherits": "windows-debug",
+            "binaryDir": "${sourceDir}/build/windows-editor",
+            "cacheVariables": { "TEYA_ENABLE_EDITOR": "ON", "TEYA_GAME_EDITOR_BUILD_TESTS": "ON" }
         },
         {
             "name": "release",
@@ -93,9 +107,18 @@
                 "lhs": "${hostSystemName}",
                 "rhs": "Windows"
             }
+        },
+        {
+            "name": "windows-profile",
+            "displayName": "Windows Profile (Visual Studio)",
+            "inherits": "windows-release",
+            "binaryDir": "${sourceDir}/build/windows-profile",
+            "cacheVariables": { "TEYA_ENABLE_PROFILING": "ON", "TEYA_ENABLE_EDITOR": "OFF" }
         }
     ],
     "buildPresets": [
+        { "name": "editor", "configurePreset": "editor" },
+        { "name": "windows-editor", "configurePreset": "windows-editor", "configuration": "Debug" },
         {
             "name": "debug",
             "configurePreset": "debug"
@@ -117,6 +140,11 @@
             "name": "windows-release",
             "configurePreset": "windows-release",
             "configuration": "Release"
+        },
+        {
+            "name": "windows-profile",
+            "configurePreset": "windows-profile",
+            "configuration": "RelWithDebInfo"
         }
     ]
 }

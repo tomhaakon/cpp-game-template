@@ -58,6 +58,10 @@ cmake --preset debug
 cmake --build --preset debug
 ```
 
+Configure the opt-in development editor with `cmake --preset editor` followed by
+`cmake --build --preset editor`. Its Dear ImGui dependencies are absent from the
+ordinary debug, release, and profile configurations.
+
 Configure and build an optimized release version:
 
 ```bash

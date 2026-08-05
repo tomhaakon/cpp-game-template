@@ -4,3 +4,6 @@
 [submodule "external/teya-2d"]
 	path = external/teya-2d
 	url = https://github.com/tomhaakon/teya-2d.git
+[submodule "external/teya-game-editor"]
+	path = external/teya-game-editor
+	url = E:\\Dokumenter\\teya-game-editor

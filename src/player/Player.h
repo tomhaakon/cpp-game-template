@@ -3,6 +3,10 @@
 #include <raylib.h>
 #include <teya/animation/Animator.h>
 #include <teya/collision2d/World.h>
+#if TEYA_ENABLE_EDITOR
+#include <teya/editor/EditorHost.h>
+#include <vector>
+#endif
 
 class Player {
   public:
@@ -18,8 +22,11 @@ class Player {
                     teya::collision2d::Vector2 position);
     void shutdown();
 
-    void update(float deltaTime);
+    void update(float deltaTime, bool inputEnabled = true);
     void draw() const;
+#if TEYA_ENABLE_EDITOR
+    [[nodiscard]] std::vector<teya::editor::RuntimeProperty> editorProperties() const;
+#endif
 
   private:
     enum class AnimationState { Idle, Walk, Run };

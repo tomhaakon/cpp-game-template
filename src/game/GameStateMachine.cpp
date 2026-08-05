@@ -12,13 +12,13 @@ bool GameStateMachine::initialize() {
     return world_.initialize();
 }
 
-GameAction GameStateMachine::update(float deltaTime) {
+GameAction GameStateMachine::update(float deltaTime, bool gameplayInputEnabled) {
     TEYA_PROFILE_ZONE_NAMED("GameStateMachine::update");
     switch (currentState_) {
     case GameState::MainMenu:
         return updateMainMenu();
     case GameState::Playing:
-        return updatePlaying(deltaTime);
+        return updatePlaying(deltaTime, gameplayInputEnabled);
     case GameState::PauseMenu:
         return updatePauseMenu();
     }
@@ -38,14 +38,21 @@ GameAction GameStateMachine::updateMainMenu() {
     return GameAction::None;
 }
 
-GameAction GameStateMachine::updatePlaying(float deltaTime) {
-    if (teya::core::Input::isPressed(teya::core::Action::Cancel)) {
+GameAction GameStateMachine::updatePlaying(float deltaTime, bool gameplayInputEnabled) {
+    if (gameplayInputEnabled && teya::core::Input::isPressed(teya::core::Action::Cancel)) {
         currentState_ = GameState::PauseMenu;
     } else {
-        world_.update(deltaTime);
+        world_.update(deltaTime, gameplayInputEnabled);
     }
     return GameAction::None;
 }
+
+const char* GameStateMachine::stateName() const { switch(currentState_){case GameState::MainMenu:return "Main Menu";case GameState::Playing:return "Playing";case GameState::PauseMenu:return "Pause Menu";}return "Unknown"; }
+const char* GameStateMachine::mapName() const{return world_.mapName();}
+int GameStateMachine::colliderCount() const{return world_.colliderCount();}
+#if TEYA_ENABLE_EDITOR
+std::vector<teya::editor::RuntimeProperty> GameStateMachine::editorProperties(teya::editor::RuntimeObjectId id) const { if(id==5)return world_.playerProperties();if(id==4)return {{"Map",world_.mapName()}};if(id==6)return {{"Collider count",std::to_string(world_.colliderCount())}};return {{"Name",id==1?"Game":id==3?"World":stateName()}}; }
+#endif
 
 GameAction GameStateMachine::updatePauseMenu() {
     switch (pauseMenu_.update()) {

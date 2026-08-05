@@ -80,18 +80,19 @@ void Player::shutdown() {
     texture_ = {};
 }
 
-void Player::update(float deltaTime) {
+void Player::update(float deltaTime, bool inputEnabled) {
     TEYA_PROFILE_ZONE_NAMED("Player::update");
     if (!world_ || collider_ == teya::collision2d::InvalidColliderId) return;
 
     using teya::core::Action;
     namespace Input = teya::core::Input;
 
-    teya::collision2d::Vector2 direction{
+    teya::collision2d::Vector2 direction{};
+    if (inputEnabled) direction = {
         static_cast<float>(Input::isDown(Action::MoveRight)) -
             static_cast<float>(Input::isDown(Action::MoveLeft)),
         static_cast<float>(Input::isDown(Action::MoveDown)) -
-            static_cast<float>(Input::isDown(Action::MoveUp))};
+        static_cast<float>(Input::isDown(Action::MoveUp))};
 
     const float length = std::sqrt(direction.x * direction.x +
                                    direction.y * direction.y);
@@ -103,7 +104,7 @@ void Player::update(float deltaTime) {
         if (direction.x > 0.0f) facingLeft_ = false;
     }
 
-    const bool running = moving && Input::isDown(Action::Run);
+    const bool running = moving && inputEnabled && Input::isDown(Action::Run);
     const float speed = running ? RunSpeed : WalkSpeed;
     (void)world_->move(
         collider_, {direction.x * speed * deltaTime,
@@ -113,6 +114,10 @@ void Player::update(float deltaTime) {
                  : (running ? AnimationState::Run : AnimationState::Walk));
     animator_.update(deltaTime);
 }
+#if TEYA_ENABLE_EDITOR
+#include <sstream>
+std::vector<teya::editor::RuntimeProperty> Player::editorProperties() const { std::vector<teya::editor::RuntimeProperty> p;const auto*c=world_?world_->get(collider_):nullptr;if(c){auto f=[](float v){std::ostringstream s;s<<v;return s.str();};p.push_back({"Position",f(c->bounds.x+c->bounds.width*.5f)+", "+f(c->bounds.y+c->bounds.height*.5f)});p.push_back({"Collider",f(c->bounds.x)+", "+f(c->bounds.y)+", "+f(c->bounds.width)+", "+f(c->bounds.height)});}p.push_back({"Facing",facingLeft_?"Left":"Right"});p.push_back({"Movement",animationState_==AnimationState::Idle?"Idle":animationState_==AnimationState::Walk?"Walk":"Run"});p.push_back({"Animation",animator_.currentAnimationName()});p.push_back({"Animation frame",std::to_string(animator_.currentFrameIndex())});p.push_back({"Texture",std::to_string(texture_.width)+" x "+std::to_string(texture_.height)});return p;}
+#endif
 
 void Player::draw() const {
     TEYA_PROFILE_ZONE_NAMED("Player::draw");

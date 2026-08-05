@@ -46,10 +46,13 @@ void World::shutdown() {
     map_.unload();
 }
 
-void World::update(float deltaTime) {
+void World::update(float deltaTime, bool gameplayInputEnabled) {
     TEYA_PROFILE_ZONE_NAMED("World::update");
-    player_.update(deltaTime);
+    player_.update(deltaTime, gameplayInputEnabled);
 }
+#if TEYA_ENABLE_EDITOR
+std::vector<teya::editor::RuntimeProperty> World::playerProperties() const{return player_.editorProperties();}
+#endif
 
 void World::draw() const {
     TEYA_PROFILE_ZONE_NAMED("World::draw");

@@ -8,6 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
 ### Added
 
+- Added the opt-in Teya development editor with a dockable Game View, runtime
+  hierarchy and inspector, performance metrics, simulation controls, and input gating.
+
 - Added an opt-in Tracy profiling preset with frame markers, timing plots, and
   instrumentation across the game loop and major systems.
 - Added `GameConfig` as the shared source for canvas dimensions, initial window scale,

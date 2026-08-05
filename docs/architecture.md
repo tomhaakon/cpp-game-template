@@ -1,5 +1,23 @@
 # Game architecture
 
+## Development editor
+
+The optional `external/teya-game-editor` submodule sits between Teya 2D and the
+game template and exposes `Teya::GameEditor`. Configure `editor` (or
+`windows-editor`) to enable it. Debug, release, and profile explicitly remain
+editor-free, so they neither configure nor download Dear ImGui/rlImGui.
+
+The game still owns the raylib window, state machine, world, and `PixelCanvas`.
+After those resources initialize it creates the editor. Gameplay is always drawn
+at the fixed canvas resolution; editor builds show that render texture, vertically
+flipped, centered and integer-scaled in Game View. The host supplies immutable
+runtime snapshots with stable IDs. One game-level Boolean gates player input based
+on Game View focus/capture, ImGui capture, modal state, and simulation state.
+
+Play updates normally, Pause continues rendering/editor interaction without world
+updates, and Step performs exactly one update at `1/60` second before pausing.
+Editor shutdown precedes canvas/window destruction through `Game` member ownership.
+
 This document describes the current 2D game-template architecture and where new
 code should live. The central rule is that `Game` manages the application,
 `game::World` manages world contents, and `Player` manages player behavior.
