@@ -60,7 +60,7 @@ bool Player::initialize(teya::collision2d::World &world, teya::collision2d::Vect
     TEYA_PROFILE_ZONE_NAMED("Player::initialize");
     shutdown();
     world_ = &world;
-    position_ = {position.x, position.y + 5.0f};
+    position_ = {position.x, position.y};
     std::string colliderConfigError;
     if (!loadPlayerColliderConfig(teya::core::assets::path("player/player.config.json"),
                                   colliderConfig_, colliderConfigError)) {
@@ -330,24 +330,18 @@ void Player::updateSwordTrail(float deltaTime) {
     const auto tip = attachmentTipWorld();
     if (!tip)
         return;
-    Vector2 smoothedTip = *tip;
     if (!swordTrail_.empty()) {
-        const float smoothing = std::clamp(object->trailSmoothing, 0.0f, .95f);
-        smoothedTip.x = tip->x * (1.0f - smoothing) +
-                        swordTrail_.back().position.x * smoothing;
-        smoothedTip.y = tip->y * (1.0f - smoothing) +
-                        swordTrail_.back().position.y * smoothing;
-    }
-    if (!swordTrail_.empty()) {
-        const float dx = smoothedTip.x - swordTrail_.back().position.x;
-        const float dy = smoothedTip.y - swordTrail_.back().position.y;
+        const float dx = tip->x - swordTrail_.back().position.x;
+        const float dy = tip->y - swordTrail_.back().position.y;
         if (dx * dx + dy * dy < 0.04f)
             return;
     }
     constexpr std::size_t MaxTrailSamples = 24;
     if (swordTrail_.size() == MaxTrailSamples)
         swordTrail_.erase(swordTrail_.begin());
-    swordTrail_.push_back({smoothedTip, 0.0f});
+    // Always retain the real sword-tip position. Curvature is applied while drawing so
+    // smoothing never makes the trail lag behind the weapon.
+    swordTrail_.push_back({*tip, 0.0f});
 }
 
 void Player::drawSwordTrail() const {
@@ -359,16 +353,47 @@ void Player::drawSwordTrail() const {
         });
     if (object == attachmentObjects_.end() || !object->trailEnabled)
         return;
+    const float curvature = std::clamp(object->trailSmoothing, 0.0f, 1.0f);
+    const int subdivisions = 1 + static_cast<int>(std::ceil(curvature * 7.0f));
+    const auto interpolate = [&](std::size_t segment, float t) {
+        const Vector2 p0 = swordTrail_[segment > 1 ? segment - 2 : 0].position;
+        const Vector2 p1 = swordTrail_[segment - 1].position;
+        const Vector2 p2 = swordTrail_[segment].position;
+        const Vector2 p3 = swordTrail_[std::min(segment + 1, swordTrail_.size() - 1)].position;
+        const float t2 = t * t, t3 = t2 * t;
+        const Vector2 curve{
+            .5f * ((2 * p1.x) + (-p0.x + p2.x) * t +
+                   (2 * p0.x - 5 * p1.x + 4 * p2.x - p3.x) * t2 +
+                   (-p0.x + 3 * p1.x - 3 * p2.x + p3.x) * t3),
+            .5f * ((2 * p1.y) + (-p0.y + p2.y) * t +
+                   (2 * p0.y - 5 * p1.y + 4 * p2.y - p3.y) * t2 +
+                   (-p0.y + 3 * p1.y - 3 * p2.y + p3.y) * t3)};
+        const Vector2 linear{p1.x + (p2.x - p1.x) * t, p1.y + (p2.y - p1.y) * t};
+        return Vector2{linear.x + (curve.x - linear.x) * curvature,
+                       linear.y + (curve.y - linear.y) * curvature};
+    };
     for (std::size_t i = 1; i < swordTrail_.size(); ++i) {
         const float life = std::clamp(
             1.0f - swordTrail_[i - 1].ageSeconds / object->trailLifetimeSeconds, 0.0f, 1.0f);
-        const unsigned char alpha =
-            static_cast<unsigned char>(255.0f * object->trailOpacity * life);
-        DrawLineEx(swordTrail_[i - 1].position, swordTrail_[i].position,
-                   object->trailWidth * life + 1.0f, Color{35, 115, 240, alpha});
-        DrawLineEx(swordTrail_[i - 1].position, swordTrail_[i].position,
-                   std::max(1.0f, object->trailWidth * .22f),
-                   Color{120, 205, 255, static_cast<unsigned char>(alpha * .65f)});
+        const unsigned char alpha = static_cast<unsigned char>(
+            object->trailColor.a * object->trailOpacity * life);
+        const Color trailColor{object->trailColor.r, object->trailColor.g,
+                               object->trailColor.b, alpha};
+        const auto highlight = [](unsigned char channel) {
+            return static_cast<unsigned char>(channel + (255 - channel) * .55f);
+        };
+        const auto coreAlpha = static_cast<unsigned char>(
+            std::max(static_cast<float>(alpha), 215.0f * life));
+        Vector2 previous = interpolate(i, 0.0f);
+        for (int step = 1; step <= subdivisions; ++step) {
+            const Vector2 next = interpolate(i, static_cast<float>(step) / subdivisions);
+            DrawLineEx(previous, next, object->trailWidth * life + 1.0f, trailColor);
+            DrawLineEx(previous, next, std::max(1.0f, object->trailWidth * .22f),
+                       Color{highlight(object->trailColor.r),
+                             highlight(object->trailColor.g),
+                             highlight(object->trailColor.b), coreAlpha});
+            previous = next;
+        }
     }
 }
 
@@ -471,6 +496,19 @@ void Player::draw() const {
     Vector2 topLeft{position_.x - w * .5f, position_.y - h};
     topLeft =
         teya::animation::applyPositionPolicy(topLeft, animationAsset_->render.roundOwnerPosition);
+    const auto &shadow = animationAsset_->render.groundShadow;
+    if (shadow.enabled && shadow.color.a > 0) {
+        Vector2 shadowCenter{position_.x + shadow.offset.x,
+                             position_.y + shadow.offset.y};
+        shadowCenter = teya::animation::applyPositionPolicy(
+            shadowCenter, animationAsset_->render.roundOwnerPosition);
+        Color edge = shadow.color;
+        edge.a = static_cast<unsigned char>(edge.a * .28f);
+        DrawEllipse(static_cast<int>(shadowCenter.x), static_cast<int>(shadowCenter.y),
+                    shadow.size.x * .58f, shadow.size.y * .68f, edge);
+        DrawEllipse(static_cast<int>(shadowCenter.x), static_cast<int>(shadowCenter.y),
+                    shadow.size.x * .5f, shadow.size.y * .5f, shadow.color);
+    }
     drawAttachments(teya::animation::AttachmentLayer::BehindOwner, topLeft);
     Rectangle src = *source;
     const bool mirrored = currentClipMirrored();

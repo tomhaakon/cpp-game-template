@@ -25,6 +25,17 @@ class GameEditorHost final : public teya::editor::EditorHost {
     saveEditableCollider(teya::editor::RuntimeObjectId id) override;
     teya::editor::ColliderEditResult
     reloadEditableCollider(teya::editor::RuntimeObjectId id) override;
+    std::optional<teya::editor::EditableGroundShadowInfo>
+    editableGroundShadow(teya::editor::RuntimeObjectId id) const override;
+    teya::editor::ColliderEditResult
+    applyEditableGroundShadow(teya::editor::RuntimeObjectId id, bool visible, Vector2 offset,
+                              Vector2 size, Color color) override;
+    teya::editor::MonsterWorkingCopyResult loadEditableMonsters() override;
+    teya::editor::ColliderEditResult saveAndApplyEditableMonsters(
+        const std::vector<teya::editor::EditableMonster> &monsters) override;
+    teya::editor::InstanceWorkingCopyResult loadEditableWorldInstances() override;
+    teya::editor::ColliderEditResult saveAndApplyWorldInstances(
+        const std::vector<teya::editor::EditableWorldInstance> &instances) override;
     std::vector<teya::editor::EditableAnimationAssetInfo> editableAnimationAssets() const override;
     teya::editor::AnimationAssetOperationResult
     createAnimationAsset(std::string_view name) override;

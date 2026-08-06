@@ -2,6 +2,7 @@
 #if TEYA_ENABLE_EDITOR
 #include "game/Game.h"
 #include "player/Player.h"
+#include "world/Monsters.h"
 #include <algorithm>
 #include <cctype>
 #include <filesystem>
@@ -106,7 +107,16 @@ GameEditorHost::editableCollider(teya::editor::RuntimeObjectId id) const {
     const bool saved = config.offset.x == savedPlayerCollider_.offset.x &&
                        config.offset.y == savedPlayerCollider_.offset.y &&
                        config.size.x == savedPlayerCollider_.size.x &&
-                       config.size.y == savedPlayerCollider_.size.y;
+                       config.size.y == savedPlayerCollider_.size.y &&
+                       config.shadowVisible == savedPlayerCollider_.shadowVisible &&
+                       config.shadowOffset.x == savedPlayerCollider_.shadowOffset.x &&
+                       config.shadowOffset.y == savedPlayerCollider_.shadowOffset.y &&
+                       config.shadowSize.x == savedPlayerCollider_.shadowSize.x &&
+                       config.shadowSize.y == savedPlayerCollider_.shadowSize.y &&
+                       config.shadowColor.r == savedPlayerCollider_.shadowColor.r &&
+                       config.shadowColor.g == savedPlayerCollider_.shadowColor.g &&
+                       config.shadowColor.b == savedPlayerCollider_.shadowColor.b &&
+                       config.shadowColor.a == savedPlayerCollider_.shadowColor.a;
     return teya::editor::EditableColliderInfo{id, "Player", player.position(), config.offset,
                                                config.size, saved};
 }
@@ -147,6 +157,83 @@ GameEditorHost::reloadEditableCollider(teya::editor::RuntimeObjectId id) {
     if (!game_.editorPlayer().applyColliderConfig(config, error))
         return {false, error};
     savedPlayerCollider_ = config;
+    return {true, {}};
+}
+std::optional<teya::editor::EditableGroundShadowInfo>
+GameEditorHost::editableGroundShadow(teya::editor::RuntimeObjectId id) const {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return std::nullopt;
+    const auto &config = game_.editorPlayer().colliderConfig();
+    return teya::editor::EditableGroundShadowInfo{id, config.shadowVisible,
+                                                   config.shadowOffset, config.shadowSize,
+                                                   config.shadowColor};
+}
+teya::editor::ColliderEditResult GameEditorHost::applyEditableGroundShadow(
+    teya::editor::RuntimeObjectId id, bool visible, Vector2 offset, Vector2 size, Color color) {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return {false, "This object has no editable ground shadow"};
+    auto config = game_.editorPlayer().colliderConfig();
+    config.shadowVisible = visible;
+    config.shadowOffset = offset;
+    config.shadowSize = size;
+    config.shadowColor = color;
+    std::string error;
+    if (!game_.editorPlayer().applyColliderConfig(config, error))
+        return {false, error};
+    return {true, {}};
+}
+teya::editor::MonsterWorkingCopyResult GameEditorHost::loadEditableMonsters() {
+    Monsters temporary;
+    std::string error;
+    if (!temporary.load(teya::core::assets::path("monsters/monsters.json"), error))
+        return {false, {}, error};
+    std::vector<teya::editor::EditableMonster> result;
+    for (const auto &monster : temporary.definitions())
+        result.push_back({monster.id, monster.name, monster.animationAssetPath, monster.position,
+                          monster.size, monster.tint});
+    return {true, std::move(result), {}};
+}
+teya::editor::ColliderEditResult GameEditorHost::saveAndApplyEditableMonsters(
+    const std::vector<teya::editor::EditableMonster> &editable) {
+    std::vector<MonsterDefinition> definitions;
+    definitions.reserve(editable.size());
+    for (const auto &monster : editable)
+        definitions.push_back({monster.id, monster.name, monster.animationAssetPath, monster.position,
+                               monster.size, monster.tint});
+    Monsters validated;
+    std::string error;
+    if (!validated.replace(definitions, error))
+        return {false, error};
+    if (!validated.save(teya::core::assets::path("monsters/monsters.json"), error))
+        return {false, error};
+    if (!game_.editorWorld().replaceMonsters(definitions, error))
+        return {false, "Saved, but live application failed: " + error};
+    return {true, {}};
+}
+teya::editor::InstanceWorkingCopyResult GameEditorHost::loadEditableWorldInstances() {
+    std::vector<teya::editor::EditableWorldInstance> result;
+    for (const auto &instance : game_.editorWorld().editorInstances())
+        result.push_back({instance.id,
+                          instance.kind == WorldInstanceKind::Player
+                              ? teya::editor::EditableInstanceKind::Player
+                              : teya::editor::EditableInstanceKind::Monster,
+                          instance.masterId, instance.position});
+    return {true, std::move(result), {}};
+}
+teya::editor::ColliderEditResult GameEditorHost::saveAndApplyWorldInstances(
+    const std::vector<teya::editor::EditableWorldInstance> &editable) {
+    std::vector<WorldInstance> instances;
+    instances.reserve(editable.size());
+    for (const auto &instance : editable)
+        instances.push_back({instance.id,
+                             instance.kind == teya::editor::EditableInstanceKind::Player
+                                 ? WorldInstanceKind::Player : WorldInstanceKind::Monster,
+                             instance.masterId, instance.position});
+    std::string error;
+    if (!game_.editorWorld().saveAndApplyInstances(instances, error)) return {false, error};
+    game_.requestGameRestart(true);
     return {true, {}};
 }
 std::vector<teya::editor::EditableAnimationAssetInfo>
@@ -312,8 +399,11 @@ GameEditorHost::saveAndApplyAnimationAsset(std::uint64_t id,
     std::string error;
     if (!teya::animation::saveAnimationAsset(*path, a, nullptr, &error))
         return {false, false, error};
-    if (!runtime)
+    if (!runtime) {
+        if (!game_.editorWorld().reloadMonsters(error))
+            return {true, false, "Saved animation, but monster reload failed: " + error};
         return {true, true, {}};
+    }
     if (!game_.editorPlayer().applyAnimationAsset(
             std::make_shared<const teya::animation::AnimationAsset>(a), error))
         return {true, false, "Saved to disk, but live application failed: " + error};
@@ -375,6 +465,7 @@ GameEditorHost::attachmentPreviews(std::uint64_t) const {
                           object.trailLifetimeSeconds,
                           object.trailWidth,
                           object.trailOpacity,
+                          object.trailColor,
                           object.trailSmoothing,
                           false});
     }
@@ -405,6 +496,7 @@ teya::editor::AttachmentObjectSaveResult GameEditorHost::saveAttachmentObjects(
                            entry.trailLifetimeSeconds,
                            entry.trailWidth,
                            entry.trailOpacity,
+                           entry.trailColor,
                            entry.trailSmoothing});
     }
     if (objects.empty())

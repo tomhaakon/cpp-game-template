@@ -27,10 +27,15 @@
             "visible": true,
             "smoothRotationFiltering": true,
             "trailEnabled": true,
-            "trailLifetimeSeconds": 0.33000001311302185,
-            "trailWidth": 10.300000190734863,
-            "trailOpacity": 0.44999998807907104,
-            "trailSmoothing": 0.3499999940395355
+            "trailLifetimeSeconds": 0.46000000834465027,
+            "trailWidth": 1.7000000476837158,
+            "trailOpacity": 1.0,
+            "trailColor": {
+                "r": 255,
+                "g": 255,
+                "b": 255
+            },
+            "trailSmoothing": 0.8999999761581421
         }
     ]
 }

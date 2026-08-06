@@ -251,6 +251,22 @@ collision world while editing, but are only written to
 discards unsaved collider changes. In Game View, drag inside the red collider to
 move it or drag its yellow lower-right handle to resize it.
 
+### Placing simple monsters
+
+Open **View → Monsters**. Add a monster, give it a name, position and size, and
+optionally assign any asset from the Animation Editor. The monster uses that asset's
+frames, timing, filtering, sockets, hitboxes, markers, and events. It initially plays
+the asset's first clip. No assigned/valid animation uses the selected fallback color. Changes remain
+in the editor working copy until **Save & Apply** writes
+`assets/monsters/monsters.json` and replaces the live list. This first version is
+placement-only: monsters do not yet have AI, collision, combat, or event interpretation.
+
+Open **View → Instances** to place masters into the world. The built-in Player master
+allows one instance; monster masters such as Slime allow any number. Each instance
+currently stores only its master and position in `assets/world/instances.json`.
+**Save & Apply** validates the one-Player rule, saves the world instances, and restarts
+the runtime so the Player and all monster placements use the new data.
+
 ## Troubleshooting
 
 If configuration reports missing raylib or nlohmann/json sources, run:

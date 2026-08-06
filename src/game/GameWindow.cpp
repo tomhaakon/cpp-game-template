@@ -6,6 +6,10 @@
 #include <stdexcept>
 #include <teya/core/Profile.h>
 
+#if defined(_WIN32) && TEYA_ENABLE_EDITOR
+void applyEditorTitleBarTheme();
+#endif
+
 GameWindow::GameWindow() {
     TEYA_PROFILE_ZONE_NAMED("GameWindow::GameWindow");
     SetConfigFlags(FLAG_WINDOW_RESIZABLE);
@@ -16,6 +20,9 @@ GameWindow::GameWindow() {
         throw std::runtime_error("Could not create the game window");
     }
 #if TEYA_ENABLE_EDITOR
+#if defined(_WIN32)
+    applyEditorTitleBarTheme();
+#endif
     // Maximizing an already-created GLFW window emits the framebuffer resize
     // callback. Creating it with FLAG_WINDOW_MAXIMIZED can leave OpenGL using
     // the initial 960x640 viewport on some Windows high-DPI configurations.

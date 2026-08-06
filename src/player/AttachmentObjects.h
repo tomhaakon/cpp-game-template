@@ -24,6 +24,7 @@ struct AttachmentObject {
     float trailLifetimeSeconds = 0.25f;
     float trailWidth = 9.0f;
     float trailOpacity = 0.45f;
+    Color trailColor{255, 255, 255, 255};
     float trailSmoothing = 0.35f;
 };
 

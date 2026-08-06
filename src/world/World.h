@@ -1,6 +1,8 @@
 #pragma once
 
 #include "player/Player.h"
+#include "world/Monsters.h"
+#include "world/WorldInstances.h"
 
 #include <teya/collision2d/World.h>
 #include <teya/tiled/MapRenderer.h>
@@ -31,6 +33,12 @@ class World {
 #if TEYA_ENABLE_EDITOR
     [[nodiscard]] std::vector<teya::editor::RuntimeProperty> playerProperties() const;
     [[nodiscard]] Player& editorPlayer() { return player_; }
+    [[nodiscard]] std::vector<MonsterDefinition> editorMonsters() const { return monsters_.definitions(); }
+    bool replaceMonsters(const std::vector<MonsterDefinition> &monsters, std::string &error);
+    bool saveMonsters(std::string &error) const;
+    bool reloadMonsters(std::string &error);
+    [[nodiscard]] const std::vector<WorldInstance> &editorInstances() const { return instances_; }
+    bool saveAndApplyInstances(const std::vector<WorldInstance> &instances, std::string &error);
     void drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const;
 #endif
 
@@ -38,6 +46,8 @@ class World {
     teya::tiled::MapRenderer map_;
     teya::collision2d::World collisions_;
     Player player_;
+    Monsters monsters_;
+    std::vector<WorldInstance> instances_;
 };
 
 } // namespace game

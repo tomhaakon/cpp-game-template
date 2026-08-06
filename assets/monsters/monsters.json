@@ -1,0 +1,23 @@
+{
+    "schemaVersion": 1,
+    "monsters": [
+        {
+            "id": 1,
+            "name": "Slime",
+            "animation": "animations/slime.animation.json",
+            "position": {
+                "x": 240.0,
+                "y": 160.0
+            },
+            "size": {
+                "x": 48.0,
+                "y": 48.0
+            },
+            "tint": {
+                "r": 255,
+                "g": 0,
+                "b": 255
+            }
+        }
+    ]
+}

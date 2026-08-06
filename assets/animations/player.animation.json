@@ -455,13 +455,13 @@
                         {
                             "active": true,
                             "bounds": {
-                                "height": 4.25,
+                                "height": 3.5306739807128906,
                                 "width": 24.25,
-                                "x": -10.75,
-                                "y": 29.5
+                                "x": -12.0,
+                                "y": 33.5
                             },
                             "name": "hitbox",
-                            "rotationDegrees": 6.300000190734863
+                            "rotationDegrees": -7.5
                         }
                     ],
                     "markers": [],
@@ -473,7 +473,7 @@
                                 "x": 22.0,
                                 "y": 33.0
                             },
-                            "rotationDegrees": -150.0,
+                            "rotationDegrees": -161.3000030517578,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -518,7 +518,7 @@
                     }
                 },
                 {
-                    "durationSeconds": 0.10000000149011612,
+                    "durationSeconds": 0.15000000596046448,
                     "events": [],
                     "hitboxes": [],
                     "markers": [],
@@ -543,7 +543,7 @@
                     }
                 },
                 {
-                    "durationSeconds": 0.10000000149011612,
+                    "durationSeconds": 0.05000000074505806,
                     "events": [],
                     "hitboxes": [],
                     "markers": [],
@@ -609,10 +609,10 @@
                             "layer": "behind_owner",
                             "name": "weapon",
                             "position": {
-                                "x": 16.0,
-                                "y": 23.0
+                                "x": 26.0,
+                                "y": 19.0
                             },
-                            "rotationDegrees": -2.5,
+                            "rotationDegrees": -27.600000381469727,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -621,11 +621,11 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 78
+                        "spriteIndex": 90
                     }
                 },
                 {
-                    "durationSeconds": 0.10000000149011612,
+                    "durationSeconds": 0.15000000596046448,
                     "events": [],
                     "hitboxes": [],
                     "markers": [],
@@ -634,10 +634,10 @@
                             "layer": "behind_owner",
                             "name": "weapon",
                             "position": {
-                                "x": 15.0,
-                                "y": 20.0
+                                "x": 32.0,
+                                "y": 15.0
                             },
-                            "rotationDegrees": 20.0,
+                            "rotationDegrees": -97.9000015258789,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -646,11 +646,11 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 79
+                        "spriteIndex": 91
                     }
                 },
                 {
-                    "durationSeconds": 0.10000000149011612,
+                    "durationSeconds": 0.05000000074505806,
                     "events": [],
                     "hitboxes": [],
                     "markers": [],
@@ -659,35 +659,10 @@
                             "layer": "behind_owner",
                             "name": "weapon",
                             "position": {
-                                "x": 19.0,
-                                "y": 32.0
-                            },
-                            "rotationDegrees": -100.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 80
-                    }
-                },
-                {
-                    "durationSeconds": 0.10000000149011612,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon",
-                            "position": {
-                                "x": 22.0,
+                                "x": 23.0,
                                 "y": 33.0
                             },
-                            "rotationDegrees": -150.0,
+                            "rotationDegrees": -57.70000076293945,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -696,7 +671,32 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 81
+                        "spriteIndex": 92
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "behind_owner",
+                            "name": "weapon",
+                            "position": {
+                                "x": 20.0,
+                                "y": 39.0
+                            },
+                            "rotationDegrees": -43.900001525878906,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 93
                     }
                 }
             ],
@@ -713,13 +713,38 @@
                     "markers": [],
                     "sockets": [
                         {
+                            "layer": "in_front",
+                            "name": "weapon",
+                            "position": {
+                                "x": 22.0,
+                                "y": 19.0
+                            },
+                            "rotationDegrees": -80.30000305175781,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 72
+                    }
+                },
+                {
+                    "durationSeconds": 0.15000000596046448,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
                             "layer": "behind_owner",
                             "name": "weapon",
                             "position": {
                                 "x": 16.0,
-                                "y": 23.0
+                                "y": 14.0
                             },
-                            "rotationDegrees": -2.5,
+                            "rotationDegrees": -23.799999237060547,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -728,7 +753,32 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 78
+                        "spriteIndex": 73
+                    }
+                },
+                {
+                    "durationSeconds": 0.05000000074505806,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [
+                        {
+                            "layer": "in_front",
+                            "name": "weapon",
+                            "position": {
+                                "x": 25.0,
+                                "y": 31.0
+                            },
+                            "rotationDegrees": 113.5,
+                            "scale": {
+                                "x": 1.0,
+                                "y": 1.0
+                            },
+                            "visible": true
+                        }
+                    ],
+                    "source": {
+                        "spriteIndex": 74
                     }
                 },
                 {
@@ -738,13 +788,13 @@
                     "markers": [],
                     "sockets": [
                         {
-                            "layer": "behind_owner",
+                            "layer": "in_front",
                             "name": "weapon",
                             "position": {
-                                "x": 15.0,
-                                "y": 20.0
+                                "x": 28.0,
+                                "y": 28.0
                             },
-                            "rotationDegrees": 20.0,
+                            "rotationDegrees": -170.60000610351563,
                             "scale": {
                                 "x": 1.0,
                                 "y": 1.0
@@ -753,57 +803,7 @@
                         }
                     ],
                     "source": {
-                        "spriteIndex": 79
-                    }
-                },
-                {
-                    "durationSeconds": 0.10000000149011612,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon",
-                            "position": {
-                                "x": 19.0,
-                                "y": 32.0
-                            },
-                            "rotationDegrees": -100.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 80
-                    }
-                },
-                {
-                    "durationSeconds": 0.10000000149011612,
-                    "events": [],
-                    "hitboxes": [],
-                    "markers": [],
-                    "sockets": [
-                        {
-                            "layer": "behind_owner",
-                            "name": "weapon",
-                            "position": {
-                                "x": 22.0,
-                                "y": 33.0
-                            },
-                            "rotationDegrees": -150.0,
-                            "scale": {
-                                "x": 1.0,
-                                "y": 1.0
-                            },
-                            "visible": true
-                        }
-                    ],
-                    "source": {
-                        "spriteIndex": 81
+                        "spriteIndex": 75
                     }
                 }
             ],
@@ -964,6 +964,23 @@
         "mode": "sprite_sheet_grid"
     },
     "render": {
+        "groundShadow": {
+            "color": {
+                "a": 105,
+                "b": 0,
+                "g": 0,
+                "r": 0
+            },
+            "enabled": true,
+            "offset": {
+                "x": 0.0,
+                "y": -7.25
+            },
+            "size": {
+                "x": 16.0,
+                "y": 6.0
+            }
+        },
         "mode": "pixel_art",
         "roundAttachmentPositions": true,
         "roundOwnerPosition": true,

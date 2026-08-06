@@ -10,6 +10,12 @@ json vector(Vector2 value) { return {{"x", value.x}, {"y", value.y}}; }
 Vector2 vector(const json &value, Vector2 fallback = {}) {
     return {value.value("x", fallback.x), value.value("y", fallback.y)};
 }
+Color color(const json &value, Color fallback = WHITE) {
+    return {static_cast<unsigned char>(value.value("r", fallback.r)),
+            static_cast<unsigned char>(value.value("g", fallback.g)),
+            static_cast<unsigned char>(value.value("b", fallback.b)), 255};
+}
+json color(Color value) { return {{"r", value.r}, {"g", value.g}, {"b", value.b}}; }
 bool validate(const std::vector<AttachmentObject> &objects, std::string &error) {
     std::unordered_set<std::uint64_t> ids;
     for (const auto &object : objects) {
@@ -74,6 +80,7 @@ bool loadAttachmentObjects(const std::filesystem::path &path,
             object.trailLifetimeSeconds = entry.value("trailLifetimeSeconds", 0.25f);
             object.trailWidth = entry.value("trailWidth", 9.0f);
             object.trailOpacity = entry.value("trailOpacity", 0.45f);
+            object.trailColor = color(entry.value("trailColor", json::object()), WHITE);
             object.trailSmoothing = entry.value("trailSmoothing", 0.35f);
             loaded.push_back(std::move(object));
         }
@@ -111,6 +118,7 @@ bool saveAttachmentObjects(const std::filesystem::path &path,
              {"trailLifetimeSeconds", object.trailLifetimeSeconds},
              {"trailWidth", object.trailWidth},
              {"trailOpacity", object.trailOpacity},
+             {"trailColor", color(object.trailColor)},
              {"trailSmoothing", object.trailSmoothing}});
     std::error_code ec;
     std::filesystem::create_directories(path.parent_path(), ec);

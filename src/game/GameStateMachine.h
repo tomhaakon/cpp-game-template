@@ -28,6 +28,7 @@ class GameStateMachine {
 #if TEYA_ENABLE_EDITOR
     [[nodiscard]] std::vector<teya::editor::RuntimeProperty> editorProperties(teya::editor::RuntimeObjectId id) const;
     [[nodiscard]] Player& editorPlayer() { return world_.editorPlayer(); }
+    [[nodiscard]] game::World& editorWorld() { return world_; }
     void drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const;
 #endif
 

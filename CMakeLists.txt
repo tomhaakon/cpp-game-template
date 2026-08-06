@@ -24,6 +24,7 @@ add_executable(teya_game
     src/game/GameStateMachine.h
     src/game/GameWindow.cpp
     src/game/GameWindow.h
+    src/game/WindowsTitleBar.cpp
     src/game/GameEditorHost.cpp
     src/game/GameEditorHost.h
     src/player/Player.cpp
@@ -39,6 +40,10 @@ add_executable(teya_game
     src/ui/UiStyle.h
     src/world/World.cpp
     src/world/World.h
+    src/world/Monsters.cpp
+    src/world/Monsters.h
+    src/world/WorldInstances.cpp
+    src/world/WorldInstances.h
 )
 target_compile_features(teya_game PRIVATE cxx_std_17)
 set_target_properties(teya_game PROPERTIES
@@ -52,6 +57,9 @@ if(TEYA_ENABLE_EDITOR)
     add_subdirectory(external/teya-game-editor EXCLUDE_FROM_ALL)
     target_link_libraries(teya_game PRIVATE Teya::GameEditor)
     target_compile_definitions(teya_game PRIVATE TEYA_ENABLE_EDITOR=1)
+    if(WIN32)
+        target_link_libraries(teya_game PRIVATE dwmapi)
+    endif()
 else()
     target_compile_definitions(teya_game PRIVATE TEYA_ENABLE_EDITOR=0)
 endif()

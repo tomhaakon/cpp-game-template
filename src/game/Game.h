@@ -32,6 +32,7 @@ class Game {
         debugDrawSettings_ = settings;
     }
     Player& editorPlayer() { return gameStates_.editorPlayer(); }
+    game::World& editorWorld() { return gameStates_.editorWorld(); }
     void requestGameRestart(bool pauseAfterRestart);
     void requestEditorExit();
 #endif

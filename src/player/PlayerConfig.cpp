@@ -14,6 +14,12 @@ bool validatePlayerColliderConfig(const PlayerColliderConfig &config, std::strin
         error = "Collider width and height must be greater than zero";
         return false;
     }
+    if (!std::isfinite(config.shadowOffset.x) || !std::isfinite(config.shadowOffset.y) ||
+        !std::isfinite(config.shadowSize.x) || !std::isfinite(config.shadowSize.y) ||
+        config.shadowSize.x <= 0.0f || config.shadowSize.y <= 0.0f) {
+        error = "Shadow offset must be finite and shadow size must be greater than zero";
+        return false;
+    }
     return true;
 }
 
@@ -36,6 +42,19 @@ bool loadPlayerColliderConfig(const std::filesystem::path &path, PlayerColliderC
                          collider.at("offset").at("y").get<float>()};
         loaded.size = {collider.at("size").at("x").get<float>(),
                        collider.at("size").at("y").get<float>()};
+        if (const auto shadow = json.find("groundShadow"); shadow != json.end()) {
+            loaded.shadowVisible = shadow->value("visible", true);
+            loaded.shadowOffset = {shadow->at("offset").at("x").get<float>(),
+                                   shadow->at("offset").at("y").get<float>()};
+            loaded.shadowSize = {shadow->at("size").at("x").get<float>(),
+                                 shadow->at("size").at("y").get<float>()};
+            if (const auto color = shadow->find("color"); color != shadow->end())
+                loaded.shadowColor = {
+                    static_cast<unsigned char>(color->value("r", 0)),
+                    static_cast<unsigned char>(color->value("g", 0)),
+                    static_cast<unsigned char>(color->value("b", 0)),
+                    static_cast<unsigned char>(color->value("a", 105))};
+        }
         if (!validatePlayerColliderConfig(loaded, error))
             return false;
         config = loaded;
@@ -56,6 +75,14 @@ bool savePlayerColliderConfig(const std::filesystem::path &path,
         json["schemaVersion"] = 1;
         json["collider"] = {{"offset", {{"x", config.offset.x}, {"y", config.offset.y}}},
                             {"size", {{"x", config.size.x}, {"y", config.size.y}}}};
+        json["groundShadow"] = {
+            {"visible", config.shadowVisible},
+            {"offset", {{"x", config.shadowOffset.x}, {"y", config.shadowOffset.y}}},
+            {"size", {{"x", config.shadowSize.x}, {"y", config.shadowSize.y}}},
+            {"color", {{"r", config.shadowColor.r},
+                       {"g", config.shadowColor.g},
+                       {"b", config.shadowColor.b},
+                       {"a", config.shadowColor.a}}}};
         std::ofstream output(path, std::ios::trunc);
         if (!output) {
             error = "Could not write " + path.string();
@@ -72,4 +99,3 @@ bool savePlayerColliderConfig(const std::filesystem::path &path,
         return false;
     }
 }
-
