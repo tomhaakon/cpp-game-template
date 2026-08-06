@@ -5,8 +5,9 @@
             "id": 1,
             "kind": "player",
             "masterId": 0,
+            "name": "Player",
             "position": {
-                "x": 240.0,
+                "x": 182.5,
                 "y": 165.0
             }
         },
@@ -14,15 +15,17 @@
             "id": 2,
             "kind": "monster",
             "masterId": 1,
+            "name": "Monster 1",
             "position": {
                 "x": 240.0,
-                "y": 160.0
+                "y": 218.5
             }
         },
         {
             "id": 3,
             "kind": "monster",
             "masterId": 1,
+            "name": "Monster 2",
             "position": {
                 "x": 240.0,
                 "y": 181.0

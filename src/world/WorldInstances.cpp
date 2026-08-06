@@ -39,6 +39,11 @@ bool loadWorldInstances(const std::filesystem::path &path, std::vector<WorldInst
             value.masterId = entry.value("masterId", std::uint64_t{0});
             value.position = {entry.at("position").at("x").get<float>(),
                               entry.at("position").at("y").get<float>()};
+            value.name = entry.value("name", std::string{});
+            if (value.name.empty())
+                value.name = value.kind == WorldInstanceKind::Player
+                                 ? "Player"
+                                 : "Monster " + std::to_string(value.id);
             loaded.push_back(value);
         }
         if (!validate(loaded, error)) return false;
@@ -53,6 +58,7 @@ bool saveWorldInstances(const std::filesystem::path &path,
         root["instances"].push_back({{"id", instance.id},
             {"kind", instance.kind == WorldInstanceKind::Player ? "player" : "monster"},
             {"masterId", instance.masterId},
+            {"name", instance.name},
             {"position", {{"x", instance.position.x}, {"y", instance.position.y}}}});
     std::filesystem::create_directories(path.parent_path());
     std::ofstream output(path, std::ios::trunc);
@@ -60,4 +66,3 @@ bool saveWorldInstances(const std::filesystem::path &path,
     output << root.dump(4) << '\n';
     return static_cast<bool>(output);
 }
-

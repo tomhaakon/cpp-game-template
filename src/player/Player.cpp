@@ -60,6 +60,7 @@ bool Player::initialize(teya::collision2d::World &world, teya::collision2d::Vect
     TEYA_PROFILE_ZONE_NAMED("Player::initialize");
     shutdown();
     world_ = &world;
+    health_ = 10;
     position_ = {position.x, position.y};
     std::string colliderConfigError;
     if (!loadPlayerColliderConfig(teya::core::assets::path("player/player.config.json"),
@@ -197,6 +198,30 @@ bool Player::currentClipMirrored() const {
         return false;
     const auto *clip = animationAsset_->findClip(animation_.playback().currentClipName());
     return clip != nullptr && clip->mirrored;
+}
+std::optional<Rectangle> Player::attackBounds() const {
+    if (slashEffectSeconds_ <= 0.0f)
+        return std::nullopt;
+    constexpr float Reach = 26.0f, Thickness = 22.0f;
+    using teya::animation::AnimationDirection;
+    switch (animation_.direction()) {
+    case AnimationDirection::Up:
+        return Rectangle{position_.x - Thickness * .5f, position_.y - Reach, Thickness, Reach};
+    case AnimationDirection::Down:
+        return Rectangle{position_.x - Thickness * .5f, position_.y, Thickness, Reach};
+    case AnimationDirection::Left:
+        return Rectangle{position_.x - Reach, position_.y - Thickness, Reach, Thickness};
+    case AnimationDirection::Right:
+    case AnimationDirection::Any:
+        return Rectangle{position_.x, position_.y - Thickness, Reach, Thickness};
+    }
+    return std::nullopt;
+}
+void Player::takeDamage(int damage) {
+    if (damage <= 0 || health_ <= 0)
+        return;
+    health_ = std::max(0, health_ - damage);
+    teya::core::Log::debug("Combat", "Player health: " + std::to_string(health_));
 }
 void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 topLeft) const {
     auto *f = animation_.playback().currentFrame();
@@ -656,6 +681,7 @@ std::vector<teya::editor::RuntimeProperty> Player::editorProperties() const {
                                      number(c->bounds.width) + ", " + number(c->bounds.height)});
     }
     p.push_back({"Facing", facingLeft_ ? "Left" : "Right"});
+    p.push_back({"Health", std::to_string(health_)});
     p.push_back({"Animation asset", animationAssetPath_});
     if (!animationAsset_)
         return p;

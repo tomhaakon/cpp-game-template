@@ -28,6 +28,9 @@ class Player {
     bool replaceAttachmentObjects(std::vector<AttachmentObject> objects, std::string &error);
     bool equipAttachment(std::uint64_t objectId, std::string &error);
     [[nodiscard]] Vector2 position() const { return position_; }
+    [[nodiscard]] std::optional<Rectangle> attackBounds() const;
+    void takeDamage(int damage);
+    [[nodiscard]] int health() const { return health_; }
     [[nodiscard]] const PlayerColliderConfig &colliderConfig() const { return colliderConfig_; }
     bool applyColliderConfig(const PlayerColliderConfig &config, std::string &error);
 #if TEYA_ENABLE_EDITOR
@@ -70,4 +73,5 @@ class Player {
     std::vector<SwordTrailSample> swordTrail_;
     std::vector<teya::animation::TriggeredAnimationEvent> recentEvents_;
     std::string animationAssetPath_ = "animations/player.animation.json";
+    int health_ = 10;
 };

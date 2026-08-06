@@ -11,10 +11,10 @@ struct WorldInstance {
     WorldInstanceKind kind = WorldInstanceKind::Monster;
     std::uint64_t masterId = 0;
     Vector2 position{240.0f, 160.0f};
+    std::string name;
 };
 
 bool loadWorldInstances(const std::filesystem::path &path, std::vector<WorldInstance> &instances,
                         std::string &error);
 bool saveWorldInstances(const std::filesystem::path &path,
                         const std::vector<WorldInstance> &instances, std::string &error);
-

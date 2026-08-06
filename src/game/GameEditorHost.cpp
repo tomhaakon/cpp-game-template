@@ -192,7 +192,10 @@ teya::editor::MonsterWorkingCopyResult GameEditorHost::loadEditableMonsters() {
     std::vector<teya::editor::EditableMonster> result;
     for (const auto &monster : temporary.definitions())
         result.push_back({monster.id, monster.name, monster.animationAssetPath, monster.position,
-                          monster.size, monster.tint});
+                          monster.size, monster.tint, monster.moveSpeed, monster.maxHealth,
+                          monster.stopDistance, monster.attackRange, monster.attackCooldown,
+                          monster.attackDamage, monster.separationRadius,
+                          monster.separationStrength, monster.surroundRadius});
     return {true, std::move(result), {}};
 }
 teya::editor::ColliderEditResult GameEditorHost::saveAndApplyEditableMonsters(
@@ -200,8 +203,12 @@ teya::editor::ColliderEditResult GameEditorHost::saveAndApplyEditableMonsters(
     std::vector<MonsterDefinition> definitions;
     definitions.reserve(editable.size());
     for (const auto &monster : editable)
-        definitions.push_back({monster.id, monster.name, monster.animationAssetPath, monster.position,
-                               monster.size, monster.tint});
+        definitions.push_back({monster.id, monster.name, monster.animationAssetPath,
+                               monster.position, monster.size, monster.tint, monster.moveSpeed,
+                               monster.maxHealth, monster.stopDistance, monster.attackRange,
+                               monster.attackCooldown, monster.attackDamage,
+                               monster.separationRadius, monster.separationStrength,
+                               monster.surroundRadius});
     Monsters validated;
     std::string error;
     if (!validated.replace(definitions, error))
@@ -219,7 +226,7 @@ teya::editor::InstanceWorkingCopyResult GameEditorHost::loadEditableWorldInstanc
                           instance.kind == WorldInstanceKind::Player
                               ? teya::editor::EditableInstanceKind::Player
                               : teya::editor::EditableInstanceKind::Monster,
-                          instance.masterId, instance.position});
+                          instance.masterId, instance.position, instance.name});
     return {true, std::move(result), {}};
 }
 teya::editor::ColliderEditResult GameEditorHost::saveAndApplyWorldInstances(
@@ -230,7 +237,7 @@ teya::editor::ColliderEditResult GameEditorHost::saveAndApplyWorldInstances(
         instances.push_back({instance.id,
                              instance.kind == teya::editor::EditableInstanceKind::Player
                                  ? WorldInstanceKind::Player : WorldInstanceKind::Monster,
-                             instance.masterId, instance.position});
+                             instance.masterId, instance.position, instance.name});
     std::string error;
     if (!game_.editorWorld().saveAndApplyInstances(instances, error)) return {false, error};
     game_.requestGameRestart(true);

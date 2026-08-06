@@ -10,6 +10,62 @@
 
 namespace {
 using json = nlohmann::ordered_json;
+teya::animation::AnimationControllerConfig monsterAnimationConfig(
+    const teya::animation::AnimationAsset &asset) {
+    teya::animation::AnimationControllerConfig config;
+    if (!asset.controller.bindings.empty()) {
+        config = asset.controller;
+
+        // Side-view monsters can reuse their horizontal artwork when no
+        // dedicated vertical animation has been authored. Explicit Up/Down
+        // bindings always win over these generated fallbacks.
+        const auto authoredBindings = config.bindings;
+        const auto addVerticalFallback = [&](std::string_view action,
+                                             teya::animation::AnimationDirection target,
+                                             teya::animation::AnimationDirection source) {
+            const auto hasTarget = std::find_if(
+                config.bindings.begin(), config.bindings.end(), [&](const auto &binding) {
+                    return binding.action == action && binding.direction == target;
+                });
+            if (hasTarget != config.bindings.end())
+                return;
+            const auto sourceBinding = std::find_if(
+                authoredBindings.begin(), authoredBindings.end(), [&](const auto &binding) {
+                    return binding.action == action && binding.direction == source;
+                });
+            if (sourceBinding != authoredBindings.end()) {
+                auto fallback = *sourceBinding;
+                fallback.direction = target;
+                config.bindings.push_back(std::move(fallback));
+            }
+        };
+        std::vector<std::string> actions;
+        for (const auto &binding : authoredBindings)
+            if (std::find(actions.begin(), actions.end(), binding.action) == actions.end())
+                actions.push_back(binding.action);
+        for (const auto &action : actions) {
+            addVerticalFallback(action, teya::animation::AnimationDirection::Up,
+                                teya::animation::AnimationDirection::Left);
+            addVerticalFallback(action, teya::animation::AnimationDirection::Down,
+                                teya::animation::AnimationDirection::Right);
+        }
+        return config;
+    }
+    config.defaultAction = "idle";
+    if (asset.findClip("idle"))
+        config.bindings.push_back({"idle", teya::animation::AnimationDirection::Any, "idle",
+                                   teya::animation::AnimationActionMode::Looping, 0});
+    if (asset.findClip("walk"))
+        config.bindings.push_back({"walk", teya::animation::AnimationDirection::Any, "walk",
+                                   teya::animation::AnimationActionMode::Looping, 0});
+    if (asset.findClip("death"))
+        config.bindings.push_back({"death", teya::animation::AnimationDirection::Any, "death",
+                                   teya::animation::AnimationActionMode::OneShot, 100});
+    if (asset.findClip("attack"))
+        config.bindings.push_back({"attack", teya::animation::AnimationDirection::Any, "attack",
+                                   teya::animation::AnimationActionMode::OneShot, 50});
+    return config;
+}
 bool validate(const std::vector<MonsterDefinition> &definitions, std::string &error) {
     std::unordered_set<std::uint64_t> ids;
     for (const auto &monster : definitions) {
@@ -23,7 +79,16 @@ bool validate(const std::vector<MonsterDefinition> &definitions, std::string &er
         }
         if (!std::isfinite(monster.position.x) || !std::isfinite(monster.position.y) ||
             !std::isfinite(monster.size.x) || !std::isfinite(monster.size.y) ||
-            monster.size.x <= 0 || monster.size.y <= 0) {
+            monster.size.x <= 0 || monster.size.y <= 0 ||
+            !std::isfinite(monster.moveSpeed) || monster.moveSpeed < 0 ||
+            monster.maxHealth <= 0 || !std::isfinite(monster.stopDistance) ||
+            monster.stopDistance < 0 || !std::isfinite(monster.attackRange) ||
+            monster.attackRange < monster.stopDistance ||
+            !std::isfinite(monster.attackCooldown) || monster.attackCooldown < 0 ||
+            monster.attackDamage < 0 || !std::isfinite(monster.separationRadius) ||
+            monster.separationRadius < 0 || !std::isfinite(monster.separationStrength) ||
+            monster.separationStrength < 0 || !std::isfinite(monster.surroundRadius) ||
+            monster.surroundRadius < 0) {
             error = "Monster positions must be finite and sizes must be positive";
             return false;
         }
@@ -61,10 +126,7 @@ bool Monsters::replace(const std::vector<MonsterDefinition> &definitions, std::s
                     asset.reset();
             }
         }
-        teya::animation::AnimationPlayer player(asset);
-        if (asset && !asset->clips.empty())
-            (void)player.play(asset->clips.front().name);
-        replacement.push_back({definition, std::move(asset), std::move(player), texture});
+        replacement.push_back({definition, std::move(asset), texture});
     }
     unload();
     entries_ = std::move(replacement);
@@ -80,10 +142,14 @@ void Monsters::setInstances(const std::vector<WorldInstance> &instances) {
         });
         if (master == entries_.end())
             continue;
-        teya::animation::AnimationPlayer player(master->animationAsset);
-        if (master->animationAsset && !master->animationAsset->clips.empty())
-            (void)player.play(master->animationAsset->clips.front().name);
-        instances_.push_back({instance, std::move(player)});
+        teya::animation::AnimationController controller(master->animationAsset);
+        if (master->animationAsset) {
+            std::string ignored;
+            (void)controller.configure(monsterAnimationConfig(*master->animationAsset), &ignored);
+            (void)controller.setAction("idle");
+        }
+        instances_.push_back({instance, std::move(controller), master->definition.maxHealth,
+                              false, false, false, false, 0.0f, 0.0f});
     }
 }
 bool Monsters::load(const std::filesystem::path &path, std::string &error) {
@@ -106,6 +172,15 @@ bool Monsters::load(const std::filesystem::path &path, std::string &error) {
                 monster.tint = {static_cast<unsigned char>(color->value("r", 220)),
                                 static_cast<unsigned char>(color->value("g", 80)),
                                 static_cast<unsigned char>(color->value("b", 80)), 255};
+            monster.moveSpeed = entry.value("moveSpeed", 20.0f);
+            monster.maxHealth = entry.value("maxHealth", 3);
+            monster.stopDistance = entry.value("stopDistance", 12.0f);
+            monster.attackRange = entry.value("attackRange", 18.0f);
+            monster.attackCooldown = entry.value("attackCooldown", 0.8f);
+            monster.attackDamage = entry.value("attackDamage", 1);
+            monster.separationRadius = entry.value("separationRadius", 14.0f);
+            monster.separationStrength = entry.value("separationStrength", 30.0f);
+            monster.surroundRadius = entry.value("surroundRadius", 8.0f);
             definitions.push_back(std::move(monster));
         }
         return replace(definitions, error);
@@ -120,19 +195,170 @@ bool Monsters::save(const std::filesystem::path &path, std::string &error) const
             {"animation", monster.animationAssetPath},
             {"position", {{"x", monster.position.x}, {"y", monster.position.y}}},
             {"size", {{"x", monster.size.x}, {"y", monster.size.y}}},
-            {"tint", {{"r", monster.tint.r}, {"g", monster.tint.g}, {"b", monster.tint.b}}}});
+            {"tint", {{"r", monster.tint.r}, {"g", monster.tint.g}, {"b", monster.tint.b}}},
+            {"moveSpeed", monster.moveSpeed}, {"maxHealth", monster.maxHealth},
+            {"stopDistance", monster.stopDistance}, {"attackRange", monster.attackRange},
+            {"attackCooldown", monster.attackCooldown},
+            {"attackDamage", monster.attackDamage},
+            {"separationRadius", monster.separationRadius},
+            {"separationStrength", monster.separationStrength},
+            {"surroundRadius", monster.surroundRadius}});
     std::filesystem::create_directories(path.parent_path());
     std::ofstream output(path, std::ios::trunc);
     if (!output) { error = "Could not write monster asset"; return false; }
     output << root.dump(4) << '\n';
     return static_cast<bool>(output);
 }
-void Monsters::update(float deltaTime) {
-    for (auto &instance : instances_)
+int Monsters::update(float deltaTime, Vector2 playerPosition,
+                     std::optional<Rectangle> playerAttackBounds) {
+    int damageToPlayer = 0;
+    std::vector<Vector2> positions;
+    positions.reserve(instances_.size());
+    for (const auto &instance : instances_)
+        positions.push_back(instance.definition.position);
+    for (std::size_t instanceIndex = 0; instanceIndex < instances_.size(); ++instanceIndex) {
+        auto &instance = instances_[instanceIndex];
+        if (instance.dead)
+            continue;
+        const auto master = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) {
+            return entry.definition.id == instance.definition.masterId;
+        });
+        if (master == entries_.end())
+            continue;
+        if (instance.dying) {
+            instance.animation.update(deltaTime);
+            if (!instance.animation.hasTriggeredAction())
+                instance.dead = true;
+            continue;
+        }
+        Vector2 &position = instance.definition.position;
+        const float dx = playerPosition.x - position.x, dy = playerPosition.y - position.y;
+        const float distance = std::sqrt(dx * dx + dy * dy);
+        const Rectangle bounds{position.x - master->definition.size.x * .5f,
+                               position.y - master->definition.size.y,
+                               master->definition.size.x, master->definition.size.y};
+        if (!playerAttackBounds)
+            instance.hitDuringAttack = false;
+        else if (!instance.hitDuringAttack && CheckCollisionRecs(bounds, *playerAttackBounds)) {
+            instance.hitDuringAttack = true;
+            if (--instance.health <= 0) {
+                instance.dying = instance.animation.trigger("death", true);
+                instance.dead = !instance.dying;
+            }
+        }
+        if (instance.dying || instance.dead) {
+            instance.animation.update(deltaTime);
+            continue;
+        }
+        if (distance > .001f) {
+            if (std::abs(dx) >= std::abs(dy))
+                instance.animation.setDirection(dx < 0 ? teya::animation::AnimationDirection::Left
+                                                       : teya::animation::AnimationDirection::Right);
+            else
+                instance.animation.setDirection(dy < 0 ? teya::animation::AnimationDirection::Up
+                                                       : teya::animation::AnimationDirection::Down);
+        }
+        instance.attackCooldownRemaining =
+            std::max(0.0f, instance.attackCooldownRemaining - std::max(deltaTime, 0.0f));
+        if (instance.attacking) {
+            instance.attackTimeRemaining -= std::max(deltaTime, 0.0f);
+            const bool playerEscaped = distance > master->definition.attackRange;
+            if (playerEscaped || instance.attackTimeRemaining <= 0.0f) {
+                instance.animation.clearTriggeredAction();
+                instance.attacking = false;
+                instance.attackCooldownRemaining = master->definition.attackCooldown;
+            }
+        }
+        bool crowded = false;
+        if (master->definition.separationRadius > .001f)
+            for (std::size_t otherIndex = 0; otherIndex < positions.size(); ++otherIndex) {
+                if (otherIndex == instanceIndex || instances_[otherIndex].dead)
+                    continue;
+                const float otherX = position.x - positions[otherIndex].x;
+                const float otherY = position.y - positions[otherIndex].y;
+                if (otherX * otherX + otherY * otherY <
+                    master->definition.separationRadius * master->definition.separationRadius * .5625f) {
+                    crowded = true;
+                    break;
+                }
+            }
+        if (!instance.attacking && !crowded && distance <= master->definition.attackRange &&
+            instance.attackCooldownRemaining <= 0.0f) {
+            instance.attacking = instance.animation.trigger("attack", true);
+            if (instance.attacking) {
+                float duration = 0.0f;
+                if (const auto *attackClip = instance.animation.playback().currentClip())
+                    for (const auto &frame : attackClip->frames)
+                        duration += frame.durationSeconds;
+                instance.attackTimeRemaining = std::max(.1f, duration + .1f);
+            }
+        }
+        if (!instance.attacking) {
+            constexpr float GoldenAngle = 2.39996323f;
+            const float slotAngle = std::fmod(static_cast<float>(instance.definition.id) *
+                                                  GoldenAngle,
+                                              6.28318531f);
+            const float slotRadius = std::min(master->definition.attackRange * .85f,
+                                              master->definition.stopDistance +
+                                                  master->definition.surroundRadius * .5f);
+            const Vector2 target{playerPosition.x + std::cos(slotAngle) * slotRadius,
+                                 playerPosition.y + std::sin(slotAngle) * slotRadius};
+            const float targetDx = target.x - position.x;
+            const float targetDy = target.y - position.y;
+            const float targetDistance = std::sqrt(targetDx * targetDx + targetDy * targetDy);
+            Vector2 velocity{};
+            if (targetDistance > 1.0f) {
+                velocity.x = targetDx / targetDistance * master->definition.moveSpeed;
+                velocity.y = targetDy / targetDistance * master->definition.moveSpeed;
+            }
+            if (master->definition.separationRadius > .001f) {
+                for (std::size_t otherIndex = 0; otherIndex < positions.size(); ++otherIndex) {
+                    if (otherIndex == instanceIndex || instances_[otherIndex].dead)
+                        continue;
+                    float awayX = position.x - positions[otherIndex].x;
+                    float awayY = position.y - positions[otherIndex].y;
+                    float apart = std::sqrt(awayX * awayX + awayY * awayY);
+                    if (apart >= master->definition.separationRadius)
+                        continue;
+                    if (apart < .001f) {
+                        const float angle = std::fmod(
+                            static_cast<float>(instance.definition.id * 31u +
+                                               instances_[otherIndex].definition.id * 17u),
+                            360.0f) * 0.0174532925f;
+                        awayX = std::cos(angle);
+                        awayY = std::sin(angle);
+                        apart = 1.0f;
+                    }
+                    const float weight = 1.0f - apart / master->definition.separationRadius;
+                    velocity.x += awayX / apart * master->definition.separationStrength * weight;
+                    velocity.y += awayY / apart * master->definition.separationStrength * weight;
+                }
+            }
+            const float velocityLength = std::sqrt(velocity.x * velocity.x + velocity.y * velocity.y);
+            const bool moving = velocityLength > .001f;
+            if (moving) {
+                const float scale = std::min(1.0f, master->definition.moveSpeed / velocityLength);
+                position.x += velocity.x * scale * std::max(deltaTime, 0.0f);
+                position.y += velocity.y * scale * std::max(deltaTime, 0.0f);
+            }
+            (void)instance.animation.setAction(moving ? "walk" : "idle");
+        }
         instance.animation.update(deltaTime);
+        for (const auto &event : instance.animation.consumeEvents())
+            if (instance.attacking && event.name == "attack_active" &&
+                distance <= master->definition.attackRange)
+                damageToPlayer += master->definition.attackDamage;
+        if (instance.attacking && !instance.animation.hasTriggeredAction()) {
+            instance.attacking = false;
+            instance.attackCooldownRemaining = master->definition.attackCooldown;
+        }
+    }
+    return damageToPlayer;
 }
 void Monsters::draw() const {
     for (const auto &instance : instances_) {
+        if (instance.dead)
+            continue;
         const auto master = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) {
             return entry.definition.id == instance.definition.masterId;
         });
@@ -142,7 +368,7 @@ void Monsters::draw() const {
         m.position = instance.definition.position;
         const Rectangle destination{m.position.x - m.size.x * .5f,
                                     m.position.y - m.size.y, m.size.x, m.size.y};
-        const auto *frame = instance.animation.currentFrame();
+        const auto *frame = instance.animation.playback().currentFrame();
         const auto source = frame && master->animationAsset
                                 ? teya::animation::animationSourceRectangle(*master->animationAsset,
                                                                             *frame)
@@ -162,7 +388,8 @@ void Monsters::draw() const {
         }
         if (source && IsTextureValid(master->texture)) {
             Rectangle sourceBounds = *source;
-            const auto *clip = master->animationAsset->findClip(instance.animation.currentClipName());
+            const auto *clip = master->animationAsset->findClip(
+                instance.animation.playback().currentClipName());
             if (clip && clip->mirrored)
                 sourceBounds.width = -sourceBounds.width;
             DrawTexturePro(master->texture, sourceBounds, destination, {}, 0, WHITE);

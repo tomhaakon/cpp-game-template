@@ -70,7 +70,8 @@ void World::shutdown() {
 void World::update(float deltaTime, bool gameplayInputEnabled) {
     TEYA_PROFILE_ZONE_NAMED("World::update");
     player_.update(deltaTime, gameplayInputEnabled);
-    monsters_.update(deltaTime);
+    player_.takeDamage(
+        monsters_.update(deltaTime, player_.position(), player_.attackBounds()));
 }
 #if TEYA_ENABLE_EDITOR
 std::vector<teya::editor::RuntimeProperty> World::playerProperties() const{return player_.editorProperties();}

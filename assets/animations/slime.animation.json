@@ -275,7 +275,12 @@
                 },
                 {
                     "durationSeconds": 0.10000000149011612,
-                    "events": [],
+                    "events": [
+                        {
+                            "name": "attack_active",
+                            "payload": ""
+                        }
+                    ],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [],
@@ -317,11 +322,228 @@
             "looping": true,
             "mirrored": true,
             "name": "attack_left"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 8
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 9
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 10
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 11
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 12
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 13
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 14
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 15
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": false,
+            "name": "walk_right"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 8
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 9
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 10
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 11
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 12
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 13
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 14
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 15
+                    }
+                }
+            ],
+            "looping": true,
+            "mirrored": true,
+            "name": "walk_left"
         }
     ],
     "controller": {
-        "bindings": [],
-        "defaultAction": "idle"
+        "bindings": [
+            {
+                "action": "attack",
+                "clip": "attack_right",
+                "direction": "right",
+                "mode": "one_shot",
+                "priority": 0
+            },
+            {
+                "action": "attack",
+                "clip": "attack_left",
+                "direction": "left",
+                "mode": "one_shot",
+                "priority": 0
+            },
+            {
+                "action": "idle",
+                "clip": "idle_left",
+                "direction": "left",
+                "mode": "looping",
+                "priority": 0
+            },
+            {
+                "action": "idle",
+                "clip": "idle_right",
+                "direction": "right",
+                "mode": "looping",
+                "priority": 0
+            },
+            {
+                "action": "walk",
+                "clip": "walk_left",
+                "direction": "left",
+                "mode": "looping",
+                "priority": 0
+            },
+            {
+                "action": "walk",
+                "clip": "walk_right",
+                "direction": "right",
+                "mode": "looping",
+                "priority": 0
+            }
+        ],
+        "defaultAction": "attack"
     },
     "frameSource": {
         "columns": 8,

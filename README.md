@@ -267,6 +267,11 @@ currently stores only its master and position in `assets/world/instances.json`.
 **Save & Apply** validates the one-Player rule, saves the world instances, and restarts
 the runtime so the Player and all monster placements use the new data.
 
+Monster masters expose **Move speed** and **Health**. Runtime monster instances move
+toward the Player and stop nearby. Player attack-active animation events create a
+short directional damage window; each monster can take one damage per attack and is
+removed when its health reaches zero. Dead monsters return when the world restarts.
+
 ## Troubleshooting
 
 If configuration reports missing raylib or nlohmann/json sources, run:
