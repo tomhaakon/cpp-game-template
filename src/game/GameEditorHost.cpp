@@ -68,6 +68,9 @@ std::optional<std::filesystem::path> destinationForName(std::string_view request
     return path;
 }
 } // namespace
+GameEditorHost::GameEditorHost(Game &game) : game_(game) {
+    savedPlayerCollider_ = game_.editorPlayer().colliderConfig();
+}
 GameEditorHost::~GameEditorHost() {
     for (auto &entry : previewTextures_)
         if (IsTextureValid(entry.second))
@@ -92,6 +95,59 @@ teya::editor::EditorFrameMetrics GameEditorHost::frameMetrics() const {
 void GameEditorHost::setDebugDrawSettings(
     const teya::editor::EditorDebugDrawSettings &settings) {
     game_.setEditorDebugDrawSettings(settings);
+}
+std::optional<teya::editor::EditableColliderInfo>
+GameEditorHost::editableCollider(teya::editor::RuntimeObjectId id) const {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return std::nullopt;
+    const auto &player = game_.editorPlayer();
+    const auto &config = player.colliderConfig();
+    const bool saved = config.offset.x == savedPlayerCollider_.offset.x &&
+                       config.offset.y == savedPlayerCollider_.offset.y &&
+                       config.size.x == savedPlayerCollider_.size.x &&
+                       config.size.y == savedPlayerCollider_.size.y;
+    return teya::editor::EditableColliderInfo{id, "Player", player.position(), config.offset,
+                                               config.size, saved};
+}
+teya::editor::ColliderEditResult
+GameEditorHost::applyEditableCollider(teya::editor::RuntimeObjectId id, Vector2 offset,
+                                      Vector2 size) {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return {false, "This object has no editable collider"};
+    std::string error;
+    if (!game_.editorPlayer().applyColliderConfig({offset, size}, error))
+        return {false, error};
+    return {true, {}};
+}
+teya::editor::ColliderEditResult
+GameEditorHost::saveEditableCollider(teya::editor::RuntimeObjectId id) {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return {false, "This object has no editable collider"};
+    const auto config = game_.editorPlayer().colliderConfig();
+    std::string error;
+    if (!savePlayerColliderConfig(teya::core::assets::path("player/player.config.json"), config,
+                                  error))
+        return {false, error};
+    savedPlayerCollider_ = config;
+    return {true, {}};
+}
+teya::editor::ColliderEditResult
+GameEditorHost::reloadEditableCollider(teya::editor::RuntimeObjectId id) {
+    constexpr teya::editor::RuntimeObjectId PlayerObjectId = 5;
+    if (id != PlayerObjectId)
+        return {false, "This object has no editable collider"};
+    PlayerColliderConfig config;
+    std::string error;
+    if (!loadPlayerColliderConfig(teya::core::assets::path("player/player.config.json"), config,
+                                  error))
+        return {false, error};
+    if (!game_.editorPlayer().applyColliderConfig(config, error))
+        return {false, error};
+    savedPlayerCollider_ = config;
+    return {true, {}};
 }
 std::vector<teya::editor::EditableAnimationAssetInfo>
 GameEditorHost::editableAnimationAssets() const {

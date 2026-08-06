@@ -1,5 +1,6 @@
 #pragma once
 #include "player/AttachmentObjects.h"
+#include "player/PlayerConfig.h"
 #include <cstdint>
 #include <memory>
 #include <optional>
@@ -26,6 +27,9 @@ class Player {
     }
     bool replaceAttachmentObjects(std::vector<AttachmentObject> objects, std::string &error);
     bool equipAttachment(std::uint64_t objectId, std::string &error);
+    [[nodiscard]] Vector2 position() const { return position_; }
+    [[nodiscard]] const PlayerColliderConfig &colliderConfig() const { return colliderConfig_; }
+    bool applyColliderConfig(const PlayerColliderConfig &config, std::string &error);
 #if TEYA_ENABLE_EDITOR
     void drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const;
     std::vector<teya::editor::RuntimeProperty> editorProperties() const;
@@ -52,6 +56,8 @@ class Player {
     void drawAttachments(teya::animation::AttachmentLayer layer, Vector2 ownerTopLeft) const;
     teya::collision2d::World *world_ = nullptr;
     teya::collision2d::ColliderId collider_ = teya::collision2d::InvalidColliderId;
+    Vector2 position_{};
+    PlayerColliderConfig colliderConfig_{};
     Texture2D texture_{};
     Texture2D attachmentTexture_{};
     std::vector<AttachmentObject> attachmentObjects_;

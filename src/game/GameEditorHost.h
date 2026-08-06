@@ -1,11 +1,12 @@
 #pragma once
 #if TEYA_ENABLE_EDITOR
+#include "player/PlayerConfig.h"
 #include <teya/editor/EditorHost.h>
 #include <unordered_map>
 class Game;
 class GameEditorHost final : public teya::editor::EditorHost {
   public:
-    explicit GameEditorHost(Game &game) : game_(game) {}
+    explicit GameEditorHost(Game &game);
     ~GameEditorHost() override;
     RenderTexture2D gameViewTexture() const override;
     int gameCanvasWidth() const override;
@@ -15,6 +16,15 @@ class GameEditorHost final : public teya::editor::EditorHost {
     inspectObject(teya::editor::RuntimeObjectId id) const override;
     teya::editor::EditorFrameMetrics frameMetrics() const override;
     void setDebugDrawSettings(const teya::editor::EditorDebugDrawSettings &settings) override;
+    std::optional<teya::editor::EditableColliderInfo>
+    editableCollider(teya::editor::RuntimeObjectId id) const override;
+    teya::editor::ColliderEditResult
+    applyEditableCollider(teya::editor::RuntimeObjectId id, Vector2 offset,
+                          Vector2 size) override;
+    teya::editor::ColliderEditResult
+    saveEditableCollider(teya::editor::RuntimeObjectId id) override;
+    teya::editor::ColliderEditResult
+    reloadEditableCollider(teya::editor::RuntimeObjectId id) override;
     std::vector<teya::editor::EditableAnimationAssetInfo> editableAnimationAssets() const override;
     teya::editor::AnimationAssetOperationResult
     createAnimationAsset(std::string_view name) override;
@@ -50,6 +60,7 @@ class GameEditorHost final : public teya::editor::EditorHost {
 
   private:
     Game &game_;
+    PlayerColliderConfig savedPlayerCollider_{};
     std::unordered_map<std::uint64_t, Texture2D> previewTextures_;
     std::unordered_map<std::uint64_t, std::string> previewTexturePaths_;
     mutable std::unordered_map<std::uint64_t, Texture2D> attachmentTextures_;

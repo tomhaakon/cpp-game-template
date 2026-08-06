@@ -9,7 +9,7 @@
 #include <teya/core/Log.h>
 #include <teya/core/Profile.h>
 namespace {
-constexpr float ColliderSize = 10, WalkSpeed = 55, RunSpeed = 100;
+constexpr float WalkSpeed = 55, RunSpeed = 100;
 std::string number(float v) {
     std::ostringstream s;
     s << v;
@@ -60,6 +60,13 @@ bool Player::initialize(teya::collision2d::World &world, teya::collision2d::Vect
     TEYA_PROFILE_ZONE_NAMED("Player::initialize");
     shutdown();
     world_ = &world;
+    position_ = {position.x, position.y + 5.0f};
+    std::string colliderConfigError;
+    if (!loadPlayerColliderConfig(teya::core::assets::path("player/player.config.json"),
+                                  colliderConfig_, colliderConfigError)) {
+        colliderConfig_ = {};
+        teya::core::Log::warning("Player", colliderConfigError + "; using default collider");
+    }
     auto loaded =
         teya::animation::loadAnimationAsset(teya::core::assets::path(animationAssetPath_));
     if (!loaded) {
@@ -100,8 +107,9 @@ bool Player::initialize(teya::collision2d::World &world, teya::collision2d::Vect
         return false;
     }
     animation_.consumeEvents();
-    collider_ = world_->add({{position.x - ColliderSize * .5f, position.y - ColliderSize * .5f,
-                              ColliderSize, ColliderSize},
+    collider_ = world_->add({{position_.x + colliderConfig_.offset.x,
+                              position_.y + colliderConfig_.offset.y,
+                              colliderConfig_.size.x, colliderConfig_.size.y},
                              1});
     return collider_ != teya::collision2d::InvalidColliderId;
 }
@@ -155,7 +163,9 @@ void Player::update(float dt, bool inputEnabled) {
     }
     bool running = moving && inputEnabled && Input::isDown(Action::Run);
     float speed = running ? RunSpeed : WalkSpeed;
-    (void)world_->move(collider_, {d.x * speed * dt, d.y * speed * dt});
+    const auto moved = world_->move(collider_, {d.x * speed * dt, d.y * speed * dt});
+    position_.x += moved.appliedDelta.x;
+    position_.y += moved.appliedDelta.y;
     if (inputEnabled && Input::isPressed(Action::Attack))
         animation_.trigger("attack", true);
     animation_.setAction(!moving ? "idle" : running ? "run" : "walk");
@@ -251,9 +261,8 @@ void Player::drawAttachments(teya::animation::AttachmentLayer layer, Vector2 top
 std::optional<Vector2> Player::attachmentTipWorld() const {
     if (!world_ || !animationAsset_ || !IsTextureValid(attachmentTexture_))
         return std::nullopt;
-    const auto *collider = world_->get(collider_);
     const auto *frame = animation_.playback().currentFrame();
-    if (!collider || !frame)
+    if (!frame)
         return std::nullopt;
     const auto source = teya::animation::animationSourceRectangle(*animationAsset_, *frame);
     if (!source)
@@ -273,8 +282,7 @@ std::optional<Vector2> Player::attachmentTipWorld() const {
     const bool mirrored = currentClipMirrored();
     auto displayedSocket = mirrored ? teya::animation::mirrorSocket(*socket, source->width)
                                     : *socket;
-    Vector2 topLeft{collider->bounds.x + collider->bounds.width * .5f - source->width * .5f,
-                    collider->bounds.y + collider->bounds.height - source->height};
+    Vector2 topLeft{position_.x - source->width * .5f, position_.y - source->height};
     topLeft =
         teya::animation::applyPositionPolicy(topLeft, animationAsset_->render.roundOwnerPosition);
     Vector2 anchor{topLeft.x + displayedSocket.position.x +
@@ -430,6 +438,24 @@ bool Player::equipAttachment(std::uint64_t objectId, std::string &error) {
     equippedAttachmentId_ = objectId;
     return true;
 }
+
+bool Player::applyColliderConfig(const PlayerColliderConfig &config, std::string &error) {
+    if (!validatePlayerColliderConfig(config, error))
+        return false;
+    if (!world_ || collider_ == teya::collision2d::InvalidColliderId) {
+        error = "Player collider is not available";
+        return false;
+    }
+    const teya::collision2d::Rectangle bounds{position_.x + config.offset.x,
+                                              position_.y + config.offset.y, config.size.x,
+                                              config.size.y};
+    if (!world_->setBounds(collider_, bounds)) {
+        error = "Could not update the live Player collider";
+        return false;
+    }
+    colliderConfig_ = config;
+    return true;
+}
 void Player::draw() const {
     TEYA_PROFILE_ZONE_NAMED("Player::draw");
     if (!world_ || !IsTextureValid(texture_) || !animationAsset_)
@@ -442,8 +468,7 @@ void Player::draw() const {
     if (!source)
         return;
     float w = source->width, h = source->height;
-    Vector2 topLeft{c->bounds.x + c->bounds.width * .5f - w * .5f,
-                    c->bounds.y + c->bounds.height - h};
+    Vector2 topLeft{position_.x - w * .5f, position_.y - h};
     topLeft =
         teya::animation::applyPositionPolicy(topLeft, animationAsset_->render.roundOwnerPosition);
     drawAttachments(teya::animation::AttachmentLayer::BehindOwner, topLeft);
@@ -471,8 +496,7 @@ void Player::drawDebug(const teya::editor::EditorDebugDrawSettings &settings) co
         DrawRectangleLinesEx({collider->bounds.x, collider->bounds.y, collider->bounds.width,
                               collider->bounds.height},
                              1.0f, RED);
-    const Vector2 origin{collider->bounds.x + collider->bounds.width * .5f,
-                         collider->bounds.y + collider->bounds.height};
+    const Vector2 origin = position_;
     if (settings.showPlayerOrigin) {
         DrawLineV({origin.x - 5, origin.y}, {origin.x + 5, origin.y}, YELLOW);
         DrawLineV({origin.x, origin.y - 5}, {origin.x, origin.y + 5}, YELLOW);
@@ -589,8 +613,7 @@ std::vector<teya::editor::RuntimeProperty> Player::editorProperties() const {
     std::vector<teya::editor::RuntimeProperty> p;
     auto *c = world_ ? world_->get(collider_) : nullptr;
     if (c) {
-        p.push_back({"Position", number(c->bounds.x + c->bounds.width * .5f) + ", " +
-                                     number(c->bounds.y + c->bounds.height * .5f)});
+        p.push_back({"Position", number(position_.x) + ", " + number(position_.y)});
         p.push_back({"Collider", number(c->bounds.x) + ", " + number(c->bounds.y) + ", " +
                                      number(c->bounds.width) + ", " + number(c->bounds.height)});
     }

@@ -242,6 +242,15 @@ library to the running Player. Add a `weapon_hand` socket to every animation fra
 where the equipped item should be visible; a frame without that socket draws no
 item. Gameplay can switch reusable objects with `Player::equipAttachment(id)`.
 
+### Editing the Player collider
+
+Select **Player** in Hierarchy, then expand **Physics / Collider** in Inspector.
+Offset is measured from the Player's feet origin. Values are applied to the live
+collision world while editing, but are only written to
+`assets/player/player.config.json` when **Save Collider** is clicked. **Reload**
+discards unsaved collider changes. In Game View, drag inside the red collider to
+move it or drag its yellow lower-right handle to resize it.
+
 ## Troubleshooting
 
 If configuration reports missing raylib or nlohmann/json sources, run:
