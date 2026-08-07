@@ -15,6 +15,26 @@ teya::animation::AnimationControllerConfig monsterAnimationConfig(
     teya::animation::AnimationControllerConfig config;
     if (!asset.controller.bindings.empty()) {
         config = asset.controller;
+        const bool hasDeathAction = std::any_of(
+            config.bindings.begin(), config.bindings.end(), [](const auto &binding) {
+                return binding.action == "death";
+            });
+        if (!hasDeathAction) {
+            using teya::animation::AnimationActionMode;
+            using teya::animation::AnimationDirection;
+            if (asset.findClip("death_left"))
+                config.bindings.push_back(
+                    {"death", AnimationDirection::Left, "death_left",
+                     AnimationActionMode::OneShot, 100});
+            if (asset.findClip("death_right"))
+                config.bindings.push_back(
+                    {"death", AnimationDirection::Right, "death_right",
+                     AnimationActionMode::OneShot, 100});
+            if (asset.findClip("death"))
+                config.bindings.push_back(
+                    {"death", AnimationDirection::Any, "death",
+                     AnimationActionMode::OneShot, 100});
+        }
 
         // Side-view monsters can reuse their horizontal artwork when no
         // dedicated vertical animation has been authored. Explicit Up/Down
@@ -133,7 +153,10 @@ bool Monsters::replace(const std::vector<MonsterDefinition> &definitions, std::s
     return true;
 }
 void Monsters::setInstances(const std::vector<WorldInstance> &instances) {
-    instances_.clear();
+    std::vector<RuntimeInstance> corpses;
+    for (auto &existing : instances_)
+        if (existing.corpse || existing.dying) corpses.push_back(std::move(existing));
+    instances_ = std::move(corpses);
     for (const auto &instance : instances) {
         if (instance.kind != WorldInstanceKind::Monster)
             continue;
@@ -148,8 +171,11 @@ void Monsters::setInstances(const std::vector<WorldInstance> &instances) {
             (void)controller.configure(monsterAnimationConfig(*master->animationAsset), &ignored);
             (void)controller.setAction("idle");
         }
-        instances_.push_back({instance, std::move(controller), master->definition.maxHealth,
-                              false, false, false, false, 0.0f, 0.0f});
+        RuntimeInstance runtime;
+        runtime.definition = instance;
+        runtime.animation = std::move(controller);
+        runtime.health = master->definition.maxHealth;
+        instances_.push_back(std::move(runtime));
     }
 }
 bool Monsters::load(const std::filesystem::path &path, std::string &error) {
@@ -209,16 +235,17 @@ bool Monsters::save(const std::filesystem::path &path, std::string &error) const
     output << root.dump(4) << '\n';
     return static_cast<bool>(output);
 }
-int Monsters::update(float deltaTime, Vector2 playerPosition,
-                     std::optional<Rectangle> playerAttackBounds) {
-    int damageToPlayer = 0;
+Monsters::UpdateResult Monsters::update(float deltaTime, Vector2 playerPosition,
+                                        std::optional<Rectangle> playerAttackBounds,
+                                        bool playerAttackIsLethal) {
+    UpdateResult result;
     std::vector<Vector2> positions;
     positions.reserve(instances_.size());
     for (const auto &instance : instances_)
         positions.push_back(instance.definition.position);
     for (std::size_t instanceIndex = 0; instanceIndex < instances_.size(); ++instanceIndex) {
         auto &instance = instances_[instanceIndex];
-        if (instance.dead)
+        if (instance.dead || instance.corpse)
             continue;
         const auto master = std::find_if(entries_.begin(), entries_.end(), [&](const auto &entry) {
             return entry.definition.id == instance.definition.masterId;
@@ -226,9 +253,7 @@ int Monsters::update(float deltaTime, Vector2 playerPosition,
         if (master == entries_.end())
             continue;
         if (instance.dying) {
-            instance.animation.update(deltaTime);
-            if (!instance.animation.hasTriggeredAction())
-                instance.dead = true;
+            updateDeathAnimation(instance, deltaTime);
             continue;
         }
         Vector2 &position = instance.definition.position;
@@ -241,9 +266,19 @@ int Monsters::update(float deltaTime, Vector2 playerPosition,
             instance.hitDuringAttack = false;
         else if (!instance.hitDuringAttack && CheckCollisionRecs(bounds, *playerAttackBounds)) {
             instance.hitDuringAttack = true;
-            if (--instance.health <= 0) {
+            result.hitInstanceIds.push_back(instance.definition.id);
+            --instance.health;
+            if (playerAttackIsLethal || instance.health <= 0) {
                 instance.dying = instance.animation.trigger("death", true);
-                instance.dead = !instance.dying;
+                if (instance.dying) {
+                    const auto *clip = instance.animation.playback().currentClip();
+                    instance.deathClipName = clip ? clip->name : std::string{};
+                    instance.deathTimeRemaining = 0.0f;
+                    if (clip)
+                        for (const auto &frame : clip->frames)
+                            instance.deathTimeRemaining += frame.durationSeconds;
+                    instance.deathTimeRemaining = std::max(instance.deathTimeRemaining, .01f);
+                } else instance.dead = true;
             }
         }
         if (instance.dying || instance.dead) {
@@ -313,7 +348,8 @@ int Monsters::update(float deltaTime, Vector2 playerPosition,
             }
             if (master->definition.separationRadius > .001f) {
                 for (std::size_t otherIndex = 0; otherIndex < positions.size(); ++otherIndex) {
-                    if (otherIndex == instanceIndex || instances_[otherIndex].dead)
+                    if (otherIndex == instanceIndex || instances_[otherIndex].dead ||
+                        instances_[otherIndex].corpse)
                         continue;
                     float awayX = position.x - positions[otherIndex].x;
                     float awayY = position.y - positions[otherIndex].y;
@@ -347,13 +383,48 @@ int Monsters::update(float deltaTime, Vector2 playerPosition,
         for (const auto &event : instance.animation.consumeEvents())
             if (instance.attacking && event.name == "attack_active" &&
                 distance <= master->definition.attackRange)
-                damageToPlayer += master->definition.attackDamage;
+                result.damageToPlayer += master->definition.attackDamage;
         if (instance.attacking && !instance.animation.hasTriggeredAction()) {
             instance.attacking = false;
             instance.attackCooldownRemaining = master->definition.attackCooldown;
         }
     }
-    return damageToPlayer;
+    return result;
+}
+int Monsters::aliveCount() const {
+    return static_cast<int>(std::count_if(instances_.begin(), instances_.end(),
+                                         [](const auto &instance) {
+                                             return !instance.dead && !instance.corpse &&
+                                                    !instance.dying;
+                                         }));
+}
+void Monsters::updateDeathAnimation(RuntimeInstance &instance, float deltaTime) {
+    instance.deathTimeRemaining -= std::max(deltaTime, 0.0f);
+    if (instance.deathTimeRemaining > 0.0f) {
+        instance.animation.update(deltaTime);
+        return;
+    }
+    auto &playback = instance.animation.playback();
+    const auto asset = playback.asset();
+    const auto *clip = asset ? asset->findClip(instance.deathClipName) : nullptr;
+    if (clip && !clip->frames.empty()) {
+        (void)playback.play(instance.deathClipName, true);
+        playback.setFrameForPreview(clip->frames.size() - 1);
+        instance.corpse = true;
+    } else {
+        instance.dead = true;
+    }
+    instance.dying = false;
+}
+void Monsters::updateDeathAnimations(float deltaTime) {
+    for (auto &instance : instances_)
+        if (instance.dying) updateDeathAnimation(instance, deltaTime);
+}
+void Monsters::clearCorpses() {
+    instances_.erase(std::remove_if(instances_.begin(), instances_.end(), [](const auto &instance) {
+                         return instance.corpse || instance.dying || instance.dead;
+                     }),
+                     instances_.end());
 }
 void Monsters::draw() const {
     for (const auto &instance : instances_) {

@@ -15,7 +15,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -25,7 +37,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -35,7 +59,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -45,7 +81,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -55,7 +103,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -65,7 +125,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -82,7 +154,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -92,7 +176,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -102,7 +198,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -112,7 +220,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -122,7 +242,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -132,7 +264,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -149,7 +293,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -159,7 +315,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -169,7 +337,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -179,7 +359,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -188,8 +380,25 @@
                 },
                 {
                     "durationSeconds": 0.10000000149011612,
-                    "events": [],
-                    "hitboxes": [],
+                    "events": [
+                        {
+                            "name": "attack_active",
+                            "payload": ""
+                        }
+                    ],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -199,7 +408,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -209,7 +430,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -219,7 +452,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -236,7 +481,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 19.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -246,7 +503,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -256,7 +525,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -266,7 +547,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -281,7 +574,19 @@
                             "payload": ""
                         }
                     ],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -291,7 +596,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -301,7 +618,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -311,7 +640,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -328,7 +669,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -338,7 +691,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -348,7 +713,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -358,7 +735,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -368,7 +757,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -378,7 +779,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -388,7 +801,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -398,7 +823,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 20.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -415,7 +852,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -425,7 +874,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -435,7 +896,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -445,7 +918,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -455,7 +940,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -465,7 +962,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -475,7 +984,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -485,7 +1006,19 @@
                 {
                     "durationSeconds": 0.10000000149011612,
                     "events": [],
-                    "hitboxes": [],
+                    "hitboxes": [
+                        {
+                            "active": true,
+                            "bounds": {
+                                "height": 8.0,
+                                "width": 8.0,
+                                "x": 21.0,
+                                "y": 33.0
+                            },
+                            "name": "hitbox",
+                            "rotationDegrees": 0.0
+                        }
+                    ],
                     "markers": [],
                     "sockets": [],
                     "source": {
@@ -496,6 +1029,180 @@
             "looping": true,
             "mirrored": true,
             "name": "walk_left"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 56
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 57
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 58
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 59
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 60
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 61
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 62
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 63
+                    }
+                }
+            ],
+            "looping": false,
+            "mirrored": false,
+            "name": "death_right"
+        },
+        {
+            "frames": [
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 56
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 57
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 58
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 59
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 60
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 61
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 62
+                    }
+                },
+                {
+                    "durationSeconds": 0.10000000149011612,
+                    "events": [],
+                    "hitboxes": [],
+                    "markers": [],
+                    "sockets": [],
+                    "source": {
+                        "spriteIndex": 63
+                    }
+                }
+            ],
+            "looping": false,
+            "mirrored": true,
+            "name": "death_left"
         }
     ],
     "controller": {

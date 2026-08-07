@@ -135,7 +135,7 @@ void Player::shutdown() {
     swordTrailActive_ = false;
     swordTrail_.clear();
 }
-void Player::update(float dt, bool inputEnabled) {
+void Player::update(float dt, bool inputEnabled, bool manualAttackEnabled) {
     TEYA_PROFILE_ZONE_NAMED("Player::update");
     if (!world_ || collider_ == teya::collision2d::InvalidColliderId)
         return;
@@ -167,18 +167,25 @@ void Player::update(float dt, bool inputEnabled) {
     const auto moved = world_->move(collider_, {d.x * speed * dt, d.y * speed * dt});
     position_.x += moved.appliedDelta.x;
     position_.y += moved.appliedDelta.y;
-    if (inputEnabled && Input::isPressed(Action::Attack))
-        animation_.trigger("attack", true);
+    movedThisFrame_ = std::abs(moved.appliedDelta.x) > .001f ||
+                      std::abs(moved.appliedDelta.y) > .001f;
+    if (inputEnabled && manualAttackEnabled && Input::isPressed(Action::Attack))
+        (void)triggerAttack();
     animation_.setAction(!moving ? "idle" : running ? "run" : "walk");
     animation_.update(dt);
     handleEvents();
     updateSwordTrail(dt);
     slashEffectSeconds_ = std::max(0.0f, slashEffectSeconds_ - dt);
 }
+bool Player::triggerAttack() {
+    if (isAttacking()) return false;
+    return animation_.trigger("attack", true);
+}
+bool Player::isAttacking() const { return animation_.currentAction() == "attack"; }
 void Player::handleEvents() {
     auto triggered = animation_.consumeEvents();
     for (const auto &e : triggered) {
-        if (e.name == "spawn_slash" || e.name == "attack_active")
+        if (e.name == "spawn_slash" || e.name == "attack_active" || e.name == "attack")
             slashEffectSeconds_ = .12f;
         else if (e.name == "attack_started")
             teya::core::Log::debug("Animation", "Attack started");
@@ -542,10 +549,6 @@ void Player::draw() const {
     DrawTexturePro(texture_, src, {topLeft.x, topLeft.y, w, h}, {0, 0}, 0, WHITE);
     drawSwordTrail();
     drawAttachments(teya::animation::AttachmentLayer::InFrontOfOwner, topLeft);
-    if (slashEffectSeconds_ > 0) {
-        Vector2 center{topLeft.x + w * .5f, topLeft.y + h * .5f};
-        DrawCircleLines(int(center.x + (mirrored ? -18 : 18)), int(center.y), 14, ORANGE);
-    }
 }
 #if TEYA_ENABLE_EDITOR
 void Player::drawDebug(const teya::editor::EditorDebugDrawSettings &settings) const {

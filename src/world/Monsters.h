@@ -34,8 +34,16 @@ class Monsters {
     bool save(const std::filesystem::path &path, std::string &error) const;
     bool replace(const std::vector<MonsterDefinition> &definitions, std::string &error);
     void unload();
-    int update(float deltaTime, Vector2 playerPosition,
-               std::optional<Rectangle> playerAttackBounds);
+    struct UpdateResult {
+        int damageToPlayer = 0;
+        std::vector<std::uint64_t> hitInstanceIds;
+    };
+    UpdateResult update(float deltaTime, Vector2 playerPosition,
+                        std::optional<Rectangle> playerAttackBounds,
+                        bool playerAttackIsLethal = false);
+    [[nodiscard]] int aliveCount() const;
+    void updateDeathAnimations(float deltaTime);
+    void clearCorpses();
     void setInstances(const std::vector<WorldInstance> &instances);
     void draw() const;
     [[nodiscard]] std::vector<MonsterDefinition> definitions() const;
@@ -54,9 +62,13 @@ class Monsters {
         bool hitDuringAttack = false;
         bool dead = false;
         bool dying = false;
+        bool corpse = false;
         bool attacking = false;
         float attackCooldownRemaining = 0.0f;
         float attackTimeRemaining = 0.0f;
+        float deathTimeRemaining = 0.0f;
+        std::string deathClipName;
     };
+    static void updateDeathAnimation(RuntimeInstance &instance, float deltaTime);
     std::vector<RuntimeInstance> instances_;
 };

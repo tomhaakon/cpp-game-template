@@ -1,0 +1,10 @@
+{
+    "schemaVersion": 1,
+    "enabled": true,
+    "standstillSeconds": 1.0,
+    "startingSlimes": 1,
+    "slimesPerLevel": 2,
+    "nextRoundDelay": 1.0,
+    "oneHitChallenge": false,
+    "resultPopupDelay": 2.0
+}

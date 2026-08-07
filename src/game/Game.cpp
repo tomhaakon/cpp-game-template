@@ -4,6 +4,7 @@
 #include <stdexcept>
 #include <chrono>
 #include <teya/core/Log.h>
+#include <teya/core/Input.h>
 #include <teya/core/Profile.h>
 
 Game::Game() : gameStates_(canvas_) {
@@ -65,7 +66,9 @@ void Game::update(float deltaTime) {
     if (editor_->context().simulationMode() == teya::editor::SimulationMode::Paused) deltaTime = 1.0f / 60.0f;
 #else
     constexpr bool inputEnabled = true;
-    constexpr std::nullopt_t canvasPointer = std::nullopt;
+    const auto windowPointer = teya::core::Input::pointerPosition();
+    const std::optional<Vector2> canvasPointer =
+        canvas_.windowToCanvas({windowPointer.x, windowPointer.y});
 #endif
     if (gameStates_.update(deltaTime, inputEnabled, canvasPointer) == GameAction::Exit) {
         exitRequested_ = true;

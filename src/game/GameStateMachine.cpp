@@ -27,7 +27,7 @@ GameAction GameStateMachine::update(float deltaTime, bool gameplayInputEnabled,
     case GameState::MainMenu:
         return updateMainMenu(gameplayInputEnabled, canvasPointer);
     case GameState::Playing:
-        return updatePlaying(deltaTime, gameplayInputEnabled);
+        return updatePlaying(deltaTime, gameplayInputEnabled, canvasPointer);
     case GameState::PauseMenu:
         return updatePauseMenu(gameplayInputEnabled, canvasPointer);
     }
@@ -49,11 +49,12 @@ GameAction GameStateMachine::updateMainMenu(bool gameplayInputEnabled,
     return GameAction::None;
 }
 
-GameAction GameStateMachine::updatePlaying(float deltaTime, bool gameplayInputEnabled) {
+GameAction GameStateMachine::updatePlaying(float deltaTime, bool gameplayInputEnabled,
+                                           std::optional<Vector2> canvasPointer) {
     if (gameplayInputEnabled && teya::core::Input::isPressed(teya::core::Action::Cancel)) {
         currentState_ = GameState::PauseMenu;
     } else {
-        world_.update(deltaTime, gameplayInputEnabled);
+        world_.update(deltaTime, gameplayInputEnabled, canvasPointer);
     }
     return GameAction::None;
 }

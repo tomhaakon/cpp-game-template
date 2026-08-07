@@ -450,7 +450,12 @@
                 },
                 {
                     "durationSeconds": 0.15000000596046448,
-                    "events": [],
+                    "events": [
+                        {
+                            "name": "attack",
+                            "payload": ""
+                        }
+                    ],
                     "hitboxes": [
                         {
                             "active": true,
@@ -569,7 +574,12 @@
                 },
                 {
                     "durationSeconds": 0.10000000149011612,
-                    "events": [],
+                    "events": [
+                        {
+                            "name": "attack",
+                            "payload": ""
+                        }
+                    ],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [
@@ -676,7 +686,12 @@
                 },
                 {
                     "durationSeconds": 0.10000000149011612,
-                    "events": [],
+                    "events": [
+                        {
+                            "name": "attack",
+                            "payload": ""
+                        }
+                    ],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [
@@ -758,7 +773,12 @@
                 },
                 {
                     "durationSeconds": 0.05000000074505806,
-                    "events": [],
+                    "events": [
+                        {
+                            "name": "attack",
+                            "payload": ""
+                        }
+                    ],
                     "hitboxes": [],
                     "markers": [],
                     "sockets": [

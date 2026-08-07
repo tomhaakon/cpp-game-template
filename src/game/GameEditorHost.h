@@ -36,6 +36,15 @@ class GameEditorHost final : public teya::editor::EditorHost {
     teya::editor::InstanceWorkingCopyResult loadEditableWorldInstances() override;
     teya::editor::ColliderEditResult saveAndApplyWorldInstances(
         const std::vector<teya::editor::EditableWorldInstance> &instances) override;
+    std::vector<teya::editor::CustomGameplayFeature> customGameplayFeatures() const override;
+    std::vector<teya::editor::GameplayDiagnostic>
+    customGameplayDiagnostics(std::uint64_t featureId) const override;
+    std::vector<teya::editor::GameplayAction>
+    customGameplayActions(std::uint64_t featureId) const override;
+    teya::editor::ColliderEditResult invokeCustomGameplayAction(
+        std::uint64_t featureId, std::string_view action) override;
+    teya::editor::ColliderEditResult saveAndApplyCustomGameplayFeature(
+        const teya::editor::CustomGameplayFeature &feature) override;
     std::vector<teya::editor::EditableAnimationAssetInfo> editableAnimationAssets() const override;
     teya::editor::AnimationAssetOperationResult
     createAnimationAsset(std::string_view name) override;

@@ -243,6 +243,77 @@ teya::editor::ColliderEditResult GameEditorHost::saveAndApplyWorldInstances(
     game_.requestGameRestart(true);
     return {true, {}};
 }
+std::vector<teya::editor::CustomGameplayFeature> GameEditorHost::customGameplayFeatures() const {
+    using Type = teya::editor::GameplaySettingType;
+    const auto &config = game_.editorWorld().herdChallenge().config();
+    teya::editor::CustomGameplayFeature feature;
+    feature.id = 1; feature.name = "Herd Challenge"; feature.enabled = config.enabled;
+    feature.settings = {
+        {"standstill_seconds", "Standstill before swing", Type::Float, false, 0,
+         config.standstillSeconds, .1f, 10.0f, .1f},
+        {"starting_slimes", "Starting slimes", Type::Integer, false,
+         config.startingSlimes, 0, 1, 100, 1},
+        {"slimes_per_level", "Additional slimes per level", Type::Integer, false,
+         config.slimesPerLevel, 0, 0, 25, 1},
+        {"one_hit_challenge", "One-hit challenge", Type::Boolean,
+         config.oneHitChallenge, 0, 0, 0, 1, 1},
+        {"result_popup_delay", "Result popup delay", Type::Float, false, 0,
+         config.resultPopupDelay, 0, 10.0f, .1f}};
+    return {std::move(feature)};
+}
+std::vector<teya::editor::GameplayDiagnostic>
+GameEditorHost::customGameplayDiagnostics(std::uint64_t featureId) const {
+    if (featureId != 1) return {};
+    const auto &challenge = game_.editorWorld().herdChallenge();
+    const int nextMonsterCount = challenge.requestedMonsterCount() +
+        (challenge.state() == HerdChallengeState::LevelComplete
+             ? challenge.config().slimesPerLevel : 0);
+    return {{"State", herdChallengeStateName(challenge.state())},
+            {"Level", std::to_string(challenge.level())},
+            {"Still time", std::to_string(challenge.stillTime()) + " s"},
+            {"Slimes hit", std::to_string(challenge.hitCount()) + " / " +
+                               std::to_string(challenge.requiredHits())},
+            {"Next monster count", std::to_string(nextMonsterCount)}};
+}
+std::vector<teya::editor::GameplayAction>
+GameEditorHost::customGameplayActions(std::uint64_t featureId) const {
+    if (featureId != 1) return {};
+    const auto state = game_.editorWorld().herdChallenge().state();
+    if (state == HerdChallengeState::LevelComplete) return {{"next_level", "Next Level"}};
+    if (state == HerdChallengeState::Missed) return {{"retry", "Retry"}};
+    return {};
+}
+teya::editor::ColliderEditResult GameEditorHost::invokeCustomGameplayAction(
+    std::uint64_t featureId, std::string_view action) {
+    if (featureId != 1) return {false, "Unknown custom gameplay feature"};
+    if (action == "next_level")
+        return game_.editorWorld().advanceHerdChallenge()
+                   ? teya::editor::ColliderEditResult{true, {}}
+                   : teya::editor::ColliderEditResult{false, "Next Level is not available"};
+    if (action == "retry")
+        return game_.editorWorld().retryHerdChallenge()
+                   ? teya::editor::ColliderEditResult{true, {}}
+                   : teya::editor::ColliderEditResult{false, "Retry is not available"};
+    return {false, "Unknown Herd Challenge action"};
+}
+teya::editor::ColliderEditResult GameEditorHost::saveAndApplyCustomGameplayFeature(
+    const teya::editor::CustomGameplayFeature &feature) {
+    if (feature.id != 1) return {false, "Unknown custom gameplay feature"};
+    auto config = game_.editorWorld().herdChallenge().config();
+    config.enabled = feature.enabled;
+    for (const auto &setting : feature.settings) {
+        if (setting.key == "standstill_seconds") config.standstillSeconds = setting.floatValue;
+        else if (setting.key == "starting_slimes") config.startingSlimes = setting.intValue;
+        else if (setting.key == "slimes_per_level") config.slimesPerLevel = setting.intValue;
+        else if (setting.key == "one_hit_challenge") config.oneHitChallenge = setting.boolValue;
+        else if (setting.key == "result_popup_delay")
+            config.resultPopupDelay = setting.floatValue;
+    }
+    std::string error;
+    return game_.editorWorld().saveAndApplyHerdChallenge(config, error)
+               ? teya::editor::ColliderEditResult{true, {}}
+               : teya::editor::ColliderEditResult{false, error};
+}
 std::vector<teya::editor::EditableAnimationAssetInfo>
 GameEditorHost::editableAnimationAssets() const {
     std::vector<teya::editor::EditableAnimationAssetInfo> result;

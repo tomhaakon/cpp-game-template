@@ -24,6 +24,8 @@ add_executable(teya_game
     src/game/GameStateMachine.h
     src/game/GameWindow.cpp
     src/game/GameWindow.h
+    src/gameplay/HerdChallenge.cpp
+    src/gameplay/HerdChallenge.h
     src/game/WindowsTitleBar.cpp
     src/game/GameEditorHost.cpp
     src/game/GameEditorHost.h

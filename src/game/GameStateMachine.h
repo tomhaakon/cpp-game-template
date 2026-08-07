@@ -37,7 +37,8 @@ class GameStateMachine {
 
     [[nodiscard]] GameAction updateMainMenu(bool gameplayInputEnabled,
                                             std::optional<Vector2> canvasPointer);
-    [[nodiscard]] GameAction updatePlaying(float deltaTime, bool gameplayInputEnabled);
+    [[nodiscard]] GameAction updatePlaying(float deltaTime, bool gameplayInputEnabled,
+                                           std::optional<Vector2> canvasPointer);
     [[nodiscard]] GameAction updatePauseMenu(bool gameplayInputEnabled,
                                              std::optional<Vector2> canvasPointer);
 

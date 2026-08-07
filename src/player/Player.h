@@ -20,7 +20,10 @@ class Player {
     Player &operator=(const Player &) = delete;
     bool initialize(teya::collision2d::World &world, teya::collision2d::Vector2 position);
     void shutdown();
-    void update(float deltaTime, bool inputEnabled = true);
+    void update(float deltaTime, bool inputEnabled = true, bool manualAttackEnabled = true);
+    bool triggerAttack();
+    [[nodiscard]] bool isAttacking() const;
+    [[nodiscard]] bool movedThisFrame() const { return movedThisFrame_; }
     void draw() const;
     [[nodiscard]] const std::vector<AttachmentObject> &attachmentObjects() const {
         return attachmentObjects_;
@@ -74,4 +77,5 @@ class Player {
     std::vector<teya::animation::TriggeredAnimationEvent> recentEvents_;
     std::string animationAssetPath_ = "animations/player.animation.json";
     int health_ = 10;
+    bool movedThisFrame_ = false;
 };
